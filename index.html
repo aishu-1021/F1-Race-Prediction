@@ -96,7 +96,6 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
 .ppod.pp3{border-top:3px solid #cd7f32;background:linear-gradient(180deg,rgba(205,127,50,0.06),var(--bg3) 45%)}
 .ppod .pod-abbr{font-size:13px;}.ppod .pod-gap{font-size:9px;}
 .pp1 .pod-abbr,.pp1 .pod-gap{color:var(--yellow)}.pp2 .pod-abbr,.pp2 .pod-gap{color:#c0c0c0}.pp3 .pod-abbr,.pp3 .pod-gap{color:#cd7f32}
-/* track note box */
 .track-note{background:rgba(0,210,255,0.04);border:1px solid rgba(0,210,255,0.15);border-radius:2px;padding:10px 14px;margin-bottom:16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:1px;line-height:1.6;}
 .track-note strong{color:var(--cyan);}
 .tpanel{background:var(--panel);padding:18px;display:flex;flex-direction:column;}
@@ -185,7 +184,6 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
   </div>
   <div class="tpanel">
     <div class="ptitle">Circuit Map <span class="badge" id="track-badge">—</span></div>
-    <!-- Mini preview SVG -->
     <div class="track-svg-wrap" style="cursor:pointer;position:relative;" onclick="openModal()" title="Click to view full circuit">
       <svg id="track-svg" viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg">
         <defs><filter id="glow-f"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
@@ -218,9 +216,6 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
 const API = "http://localhost:5000/api";
 const TC = {"McLaren":"#ff8000","Ferrari":"#e8002d","Mercedes":"#27f4d2","Red Bull Racing":"#3671c6","Aston Martin":"#229971","Alpine":"#0093cc","Williams":"#64c4ff","Racing Bulls":"#6692ff","Kick Sauber":"#52e252","Haas F1 Team":"#b6babd"};
 
-// ══════════════════════════════════════════════════════════════
-// ALL 24 ROUNDS — 2026 SEASON
-// ══════════════════════════════════════════════════════════════
 const SCHEDULE = [
   {r:1, name:"Australian GP",    short:"Australian",  loc:"Melbourne",   date:"Mar 16",laps:58,dist:307,status:"done",   circuit_type:"street_park", flag:"🇦🇺"},
   {r:2, name:"Chinese GP",       short:"Chinese",     loc:"Shanghai",    date:"Mar 15",laps:56,dist:305,status:"done",  circuit_type:"technical",   flag:"🇨🇳"},
@@ -248,17 +243,7 @@ const SCHEDULE = [
   {r:24,name:"Abu Dhabi GP",     short:"Abu Dhabi",   loc:"Abu Dhabi",   date:"Dec 07",laps:58,dist:306,status:"upcoming",circuit_type:"technical",  flag:"🇦🇪"},
 ];
 
-// ══════════════════════════════════════════════════════════════
-// CIRCUIT-SPECIFIC QUALIFYING GRIDS
-// Each circuit type favours different drivers.
-// street = Monaco, Baku, Jeddah — tight, overtaking hard, quali matters most
-// power  = Monza, Las Vegas — engine power, low-drag teams
-// fast   = Spa, Silverstone, Spa — high-speed, aero
-// technical = Suzuka, Budapest, Barcelona — driver skill + balance
-// street_park = Melbourne, Miami, Montreal — mixed
-// ══════════════════════════════════════════════════════════════
 const CIRCUIT_GRIDS = {
-  // Melbourne — mixed circuit, 2026 form-based
   Melbourne: [
     {pos:1,abbr:"NOR",name:"Lando Norris",     team:"McLaren",        color:"#ff8000"},
     {pos:2,abbr:"PIA",name:"Oscar Piastri",    team:"McLaren",        color:"#ff8000"},
@@ -281,7 +266,6 @@ const CIRCUIT_GRIDS = {
     {pos:19,abbr:"OCO",name:"Esteban Ocon",    team:"Haas F1 Team",   color:"#b6babd"},
     {pos:20,abbr:"BEA",name:"Oliver Bearman",  team:"Haas F1 Team",   color:"#b6babd"},
   ],
-  // Monaco — street circuit, quali-lap specialists, Leclerc historically dominates
   Monaco: [
     {pos:1,abbr:"LEC",name:"Charles Leclerc",  team:"Ferrari",        color:"#e8002d"},
     {pos:2,abbr:"VER",name:"Max Verstappen",   team:"Red Bull Racing",color:"#3671c6"},
@@ -304,7 +288,6 @@ const CIRCUIT_GRIDS = {
     {pos:19,abbr:"OCO",name:"Esteban Ocon",    team:"Haas F1 Team",   color:"#b6babd"},
     {pos:20,abbr:"BEA",name:"Oliver Bearman",  team:"Haas F1 Team",   color:"#b6babd"},
   ],
-  // Monza — power track, Red Bull & McLaren engines strong, slipstream effect
   Monza: [
     {pos:1,abbr:"NOR",name:"Lando Norris",     team:"McLaren",        color:"#ff8000"},
     {pos:2,abbr:"VER",name:"Max Verstappen",   team:"Red Bull Racing",color:"#3671c6"},
@@ -327,7 +310,6 @@ const CIRCUIT_GRIDS = {
     {pos:19,abbr:"OCO",name:"Esteban Ocon",    team:"Haas F1 Team",   color:"#b6babd"},
     {pos:20,abbr:"BEA",name:"Oliver Bearman",  team:"Haas F1 Team",   color:"#b6babd"},
   ],
-  // Silverstone — high speed, Mercedes/McLaren strong in British weather
   Silverstone: [
     {pos:1,abbr:"NOR",name:"Lando Norris",     team:"McLaren",        color:"#ff8000"},
     {pos:2,abbr:"RUS",name:"George Russell",   team:"Mercedes",       color:"#27f4d2"},
@@ -350,7 +332,6 @@ const CIRCUIT_GRIDS = {
     {pos:19,abbr:"OCO",name:"Esteban Ocon",    team:"Haas F1 Team",   color:"#b6babd"},
     {pos:20,abbr:"BEA",name:"Oliver Bearman",  team:"Haas F1 Team",   color:"#b6babd"},
   ],
-  // Spa — high speed, Verstappen strong here historically
   Spa: [
     {pos:1,abbr:"VER",name:"Max Verstappen",   team:"Red Bull Racing",color:"#3671c6"},
     {pos:2,abbr:"NOR",name:"Lando Norris",     team:"McLaren",        color:"#ff8000"},
@@ -373,7 +354,6 @@ const CIRCUIT_GRIDS = {
     {pos:19,abbr:"OCO",name:"Esteban Ocon",    team:"Haas F1 Team",   color:"#b6babd"},
     {pos:20,abbr:"BEA",name:"Oliver Bearman",  team:"Haas F1 Team",   color:"#b6babd"},
   ],
-  // Suzuka — technical, demands precision, Verstappen & Norris strong
   Suzuka: [
     {pos:1,abbr:"VER",name:"Max Verstappen",   team:"Red Bull Racing",color:"#3671c6"},
     {pos:2,abbr:"NOR",name:"Lando Norris",     team:"McLaren",        color:"#ff8000"},
@@ -396,7 +376,6 @@ const CIRCUIT_GRIDS = {
     {pos:19,abbr:"OCO",name:"Esteban Ocon",    team:"Haas F1 Team",   color:"#b6babd"},
     {pos:20,abbr:"BEA",name:"Oliver Bearman",  team:"Haas F1 Team",   color:"#b6babd"},
   ],
-  // Baku — street, chaotic, safety cars common, Perez historically (now Verstappen)
   Baku: [
     {pos:1,abbr:"LEC",name:"Charles Leclerc",  team:"Ferrari",        color:"#e8002d"},
     {pos:2,abbr:"NOR",name:"Lando Norris",     team:"McLaren",        color:"#ff8000"},
@@ -421,9 +400,8 @@ const CIRCUIT_GRIDS = {
   ],
 };
 
-// Circuit notes shown in prediction panel — gives context for the prediction
 const CIRCUIT_NOTES = {
-  Melbourne:   "🏎️ <strong>Street park circuit</strong> — mixed layout, good overtaking. McLaren dominant in 2025.",
+  Melbourne:   "🏎️ <strong>Albert Park street-park circuit</strong> — 14 corners, 5.278km. Fast flowing layout around a lake. Good overtaking at T1 and T3. Safety car common on opening lap.",
   Shanghai:    "🏎️ <strong>Technical circuit</strong> — long straight + heavy braking zones. Tyre management key.",
   Suzuka:      "🏎️ <strong>High-speed technical</strong> — figure-of-eight layout. Demands car balance & driver precision. Verstappen loves this track.",
   Sakhir:      "🏎️ <strong>Night race, desert track</strong> — smooth tarmac, high tyre deg. Good for well-balanced cars.",
@@ -449,9 +427,6 @@ const CIRCUIT_NOTES = {
   "Abu Dhabi":  "🏎️ <strong>Season finale</strong> — Yas Marina twilight race. Fast, technical. Usually clear conditions.",
 };
 
-// ══════════════════════════════════════════════════════════════
-// REAL RACE RESULTS (updated as season progresses)
-// ══════════════════════════════════════════════════════════════
 const REAL_RESULTS = {
   1: {
     winner:"RUS", winnerName:"George Russell", winnerTeam:"Mercedes", raceTime:"1:23:06.801", flag:"🇦🇺",
@@ -483,13 +458,8 @@ const REAL_RESULTS = {
       {pos:20,abbr:"HUL",name:"Nico Hülkenberg",   team:"Audi",            gap:"DNS",        pts:0},
     ]
   },
-  // ══ ADD EACH RACE RESULT HERE AFTER IT FINISHES ══
-  // Copy the block above and update with real data.
-  // Chinese GP result — race is TODAY March 15, 2026, result to be added tonight
-  // 2: { winner:"NOR", winnerName:"Lando Norris", winnerTeam:"McLaren", raceTime:"...", flag:"🇨🇳", podium:[...], full:[...] }
 };
 
-// Driver stats for prediction scoring
 const DS = {
   "NOR":{f:22.1,ts:1.00},"PIA":{f:19.8,ts:1.00},"LEC":{f:14.2,ts:0.78},"HAM":{f:13.5,ts:0.78},
   "RUS":{f:16.8,ts:0.82},"ANT":{f:14.1,ts:0.82},"VER":{f:18.5,ts:0.68},"LAW":{f:9.2, ts:0.68},
@@ -498,30 +468,132 @@ const DS = {
   "HUL":{f:5.8, ts:0.38},"BOR":{f:4.9, ts:0.38},"OCO":{f:6.1, ts:0.25},"BEA":{f:5.5, ts:0.25},
 };
 
-// ═══════════════════════════════════════════════════════════════════
-// CIRCUIT TRACKS — unique SVG path + car waypoints per venue
-// Each track: path (SVG d= string), sf (start/finish line coords),
-//             pts (array of {x,y} waypoints cars follow)
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// CIRCUIT TRACKS — Mini preview SVG (viewBox 300x280)
+// ═══════════════════════════════════════════════════════════
 const CIRCUIT_TRACKS = {
 
-  // MELBOURNE — Albert Park, figure-8 shaped park circuit
+  // ─────────────────────────────────────────────────────────
+  // MELBOURNE — Albert Park (14 corners, 5.278km)
+  // Accurately traced from official FIA circuit map
+  // Layout: S/F bottom-right → T01-T02 bottom → T03-T05 left
+  // infield (tight) → T06-T07 top-left hairpin → T08 top sweep
+  // → T09 kink → T10 right sweeper → T11 far-right hairpin
+  // → T12-T13 DRS zone → T14 back to S/F
+  // ─────────────────────────────────────────────────────────
   Melbourne: {
-    path: "M220,90 C240,70 260,80 260,110 C260,135 245,148 230,155 C248,162 262,175 260,200 C258,230 235,250 200,255 C165,260 130,250 110,235 C90,220 85,200 95,185 C75,185 50,175 45,155 C40,135 55,118 75,115 C60,105 55,88 65,72 C78,53 105,48 130,55 C155,62 165,78 160,95 C175,82 195,75 220,90Z",
-    sf: {x1:258,y1:108,x2:258,y2:128,tx:263,ty:120},
-    pts:[
-      {x:258,y:110},{x:255,y:95},{x:245,y:82},{x:232,y:76},{x:218,y:78},
-      {x:205,y:85},{x:195,y:95},{x:185,y:90},{x:172,y:80},{x:158,y:75},
-      {x:140,y:72},{x:122,y:73},{x:108,y:80},{x:98,y:92},{x:95,y:107},
-      {x:100,y:120},{x:112,y:128},{x:105,y:140},{x:95,y:152},{x:90,y:165},
-      {x:95,y:178},{x:108,y:188},{x:122,y:193},{x:135,y:205},{x:138,y:220},
-      {x:148,y:235},{x:165,y:248},{x:185,y:252},{x:205,y:248},{x:222,y:238},
-      {x:235,y:223},{x:240,y:205},{x:238,y:188},{x:250,y:178},{x:258,y:165},
-      {x:260,y:148},{x:255,y:135},{x:258,y:122},
-    ]
-  },
+  path: `M 68,75
+           L 82,66
+           L 88,69
+           L 98,74
+           L 104,82
+           L 112,93
+           L 118,107
+           L 125,123
+           L 135,134
+           L 145,140
+           L 153,142
+           L 162,141
+           L 169,141
+           L 172,139
+           L 175,135
+           L 179,129
+           L 182,124
+           L 191,125
+           L 202,123
+           L 211,123
+           L 221,128
+           L 229,132
+           L 241,140
+           L 250,148
+           L 245,164
+           L 241,174
+           L 238,179
+           L 236,180
+           L 233,180
+           L 224,177
+           L 216,175
+           L 212,175
+           L 210,179
+           L 212,187
+           L 212,191
+           L 210,193
+           L 208,197
+           L 205,197
+           L 197,197
+           L 186,197
+           L 157,188
+           L 151,188
+           L 145,189
+           L 130,190
+           L 120,190
+           L 110,191
+           L 110,186
+           L 107,180
+           L 104,177
+           L 99,175
+           L 96,174
+           L 88,175
+           L 72,174
+           L 63,173
+           L 54,172
+           L 48,170
+           L 43,168
+           L 42,165
+           L 42,159
+           L 42,159
+           L 45,157
+           L 47,153
+           L 47,149
+           L 46,145
+           L 45,144
+           L 41,138
+           L 36,132
+           L 33,129
+           L 32,118
+           L 32,107
+           L 34,99
+           L 35,91
+           L 37,87
+           L 40,78
+           L 41,71
+           L 45,71
+           L 48,70
+           L 53,66
+           L 60,61
+           L 65,60
+           L 69,58
+           L 74,57
+           L 80,59
+           L 85,62
+           L 90,67`,
+  sf: {x1:68,y1:71,x2:68,y2:79,tx:72,ty:80,label:"S/F"},
+  pts:[
+      {x:68,y:75},{x:82,y:66},{x:88,y:69},{x:98,y:74},
+      {x:104,y:82},{x:112,y:93},{x:118,y:107},{x:125,y:123},
+      {x:135,y:134},{x:145,y:140},{x:153,y:142},{x:162,y:141},
+      {x:169,y:141},{x:172,y:139},{x:175,y:135},{x:179,y:129},
+      {x:182,y:124},{x:191,y:125},{x:202,y:123},{x:211,y:123},
+      {x:221,y:128},{x:229,y:132},{x:241,y:140},{x:250,y:148},
+      {x:245,y:164},{x:241,y:174},{x:238,y:179},{x:236,y:180},
+      {x:233,y:180},{x:224,y:177},{x:216,y:175},{x:212,y:175},
+      {x:210,y:179},{x:212,y:187},{x:212,y:191},{x:210,y:193},
+      {x:208,y:197},{x:205,y:197},{x:197,y:197},{x:186,y:197},
+      {x:157,y:188},{x:151,y:188},{x:145,y:189},{x:130,y:190},
+      {x:120,y:190},{x:110,y:191},{x:110,y:186},{x:107,y:180},
+      {x:104,y:177},{x:99,y:175},{x:96,y:174},{x:88,y:175},
+      {x:72,y:174},{x:63,y:173},{x:54,y:172},{x:48,y:170},
+      {x:43,y:168},{x:42,y:165},{x:42,y:159},{x:42,y:159},
+      {x:45,y:157},{x:47,y:153},{x:47,y:149},{x:46,y:145},
+      {x:45,y:144},{x:41,y:138},{x:36,y:132},{x:33,y:129},
+      {x:32,y:118},{x:32,y:107},{x:34,y:99},{x:35,y:91},
+      {x:37,y:87},{x:40,y:78},{x:41,y:71},{x:45,y:71},
+      {x:48,y:70},{x:53,y:66},{x:60,y:61},{x:65,y:60},
+      {x:69,y:58},{x:74,y:57},{x:80,y:59},{x:85,y:62},
+      {x:90,y:67},
+  ]
+},
 
-  // SHANGHAI — China, wide track with long back straight
   Shanghai: {
     path: "M60,80 L200,80 C230,80 250,95 250,120 L250,145 C250,162 238,172 220,172 L200,172 L200,185 C200,205 215,215 235,215 L255,215 L255,240 L145,240 L145,215 L165,215 C180,215 185,205 185,192 L185,172 L80,172 C58,172 45,158 45,138 L45,112 C45,93 52,80 60,80Z",
     sf: {x1:248,y1:78,x2:248,y2:98,tx:253,ty:91},
@@ -538,7 +610,6 @@ const CIRCUIT_TRACKS = {
     ]
   },
 
-  // SUZUKA — Japan, figure-of-eight with iconic S-curves
   Suzuka: {
     path: "M240,70 C255,70 265,80 265,95 C265,112 252,122 238,122 L220,122 C205,122 195,132 195,147 C195,162 205,172 220,172 L240,172 C255,172 268,183 268,200 C268,218 255,230 238,230 L130,230 C108,230 90,218 82,200 C74,183 78,163 93,152 L108,142 C93,130 80,112 80,90 C80,65 100,48 125,48 L200,48 C222,48 240,57 240,70Z",
     sf: {x1:263,y1:88,x2:263,y2:108,tx:267,ty:100},
@@ -561,7 +632,6 @@ const CIRCUIT_TRACKS = {
     ]
   },
 
-  // MONACO — iconic street circuit, very tight, hairpin
   Monaco: {
     path: "M245,100 C260,95 268,105 265,120 L258,148 C268,155 272,168 265,180 C255,195 235,195 225,185 L210,170 L195,185 C185,198 168,200 155,192 C142,183 140,168 150,158 L158,148 L148,138 C132,125 130,105 142,92 C155,78 178,78 192,92 L200,100 C210,88 228,88 245,100Z",
     sf: {x1:263,y1:100,x2:263,y2:120,tx:267,ty:112},
@@ -577,7 +647,6 @@ const CIRCUIT_TRACKS = {
     ]
   },
 
-  // MONZA — high-speed oval-ish with chicanes
   Monza: {
     path: "M235,60 C250,60 262,70 262,85 L262,105 C262,118 255,128 243,132 L243,150 C255,155 262,165 262,178 L262,198 C262,215 248,228 232,228 L175,228 C158,228 145,215 145,198 L145,178 C145,165 152,155 163,150 L163,132 C150,128 143,118 143,105 L143,85 C143,70 155,60 168,60Z",
     sf: {x1:260,y1:80,x2:260,y2:100,tx:264,ty:92},
@@ -593,7 +662,6 @@ const CIRCUIT_TRACKS = {
     ]
   },
 
-  // SILVERSTONE — fast flowing UK circuit
   Silverstone: {
     path: "M80,95 C80,72 98,58 120,58 L200,58 C225,58 245,68 252,88 L265,120 C272,142 265,162 248,172 L248,190 C265,200 272,220 262,240 C252,258 230,265 208,258 L165,245 C148,258 125,262 105,252 C82,240 75,218 85,198 L85,175 C68,165 58,145 65,122Z",
     sf: {x1:263,y1:115,x2:263,y2:135,tx:267,ty:127},
@@ -609,7 +677,6 @@ const CIRCUIT_TRACKS = {
     ]
   },
 
-  // SPA — classic long circuit, Eau Rouge, Kemmel
   Spa: {
     path: "M248,68 C260,68 268,78 265,90 L255,120 C268,130 275,148 268,165 C258,185 235,190 218,180 L205,172 C195,188 178,195 160,188 C142,180 137,162 147,148 L152,138 C138,128 130,110 138,92 C148,72 172,65 192,75 L205,82 C215,70 232,62 248,68Z",
     sf: {x1:263,y1:68,x2:263,y2:88,tx:267,ty:80},
@@ -626,7 +693,6 @@ const CIRCUIT_TRACKS = {
     ]
   },
 
-  // BAKU — long straight, tight castle section
   Baku: {
     path: "M262,70 L262,200 C262,218 250,232 232,235 L185,240 C168,240 155,228 155,210 L155,195 L130,195 C112,195 98,182 98,165 L98,128 C98,110 112,97 130,97 L155,97 L155,80 C155,62 168,50 185,50 L232,50 C250,50 262,58 262,70Z",
     sf: {x1:260,y1:68,x2:260,y2:88,tx:264,ty:80},
@@ -645,7 +711,6 @@ const CIRCUIT_TRACKS = {
     ]
   },
 
-  // SINGAPORE — night street circuit, many corners
   Singapore: {
     path: "M245,58 C260,58 270,70 268,85 L260,108 C270,118 272,135 262,148 C250,162 230,162 218,150 L208,140 L198,152 C188,165 170,168 157,158 C144,148 143,130 155,120 L162,112 L152,98 C142,82 148,62 165,55 C182,48 200,58 205,75 L210,88 C220,72 232,58 245,58Z",
     sf: {x1:266,y1:78,x2:266,y2:98,tx:270,ty:90},
@@ -665,7 +730,6 @@ const CIRCUIT_TRACKS = {
     ]
   },
 
-  // Default fallback for all other circuits
   default: {
     path: "M240,140 C240,80 200,40 150,40 C100,40 60,65 50,100 C40,130 55,155 70,160 C55,165 40,180 45,210 C50,235 80,250 120,250 C160,250 220,235 240,200 C255,175 255,160 240,140Z",
     sf: {x1:240,y1:128,x2:240,y2:152,tx:245,ty:142},
@@ -681,7 +745,6 @@ const CIRCUIT_TRACKS = {
   }
 };
 
-// Map circuit locations to track keys
 const TRACK_KEY = {
   "Melbourne":"Melbourne","Shanghai":"Shanghai","Suzuka":"Suzuka","Sakhir":"default",
   "Jeddah":"default","Miami":"default","Montreal":"default","Monaco":"Monaco",
@@ -692,7 +755,6 @@ const TRACK_KEY = {
   "Las Vegas":"default","Lusail":"default","Abu Dhabi":"default"
 };
 
-// Active track points (updated when race is selected)
 let TP = CIRCUIT_TRACKS.default.pts;
 
 function loadCircuitTrack(loc) {
@@ -716,17 +778,13 @@ let curRace=null, curGrid=[], carProg=[], animId=null;
 let wx={condition:"dry",temp:24};
 
 function getGridForRace(race) {
-  // Use specific grid if we have one, otherwise build from circuit type
   if (CIRCUIT_GRIDS[race.loc]) return JSON.parse(JSON.stringify(CIRCUIT_GRIDS[race.loc]));
-  // Fallback: shuffle slightly based on circuit type
   const base = JSON.parse(JSON.stringify(CIRCUIT_GRIDS["Melbourne"]));
   if (race.circuit_type === "street") {
-    // Bump Leclerc up on street circuits
     const lec = base.splice(base.findIndex(d=>d.abbr==="LEC"),1)[0];
     base.unshift(lec);
     base.forEach((d,i)=>d.pos=i+1);
   } else if (race.circuit_type === "power") {
-    // Verstappen up on power circuits
     const ver = base.splice(base.findIndex(d=>d.abbr==="VER"),1)[0];
     const law = base.splice(base.findIndex(d=>d.abbr==="LAW"),1)[0];
     base.splice(1,0,ver); base.splice(4,0,law);
@@ -737,7 +795,6 @@ function getGridForRace(race) {
 
 function init(){
   buildTabs();
-  // FIX: just select Round 1 — no extra auto-select
   selectRace(0);
   checkLive();
   setInterval(checkLive, 30000);
@@ -767,11 +824,10 @@ async function selectRace(idx){
   document.getElementById('s-laps').textContent=curRace.laps;
   document.getElementById('s-dist').textContent=curRace.dist;
   document.getElementById('t-rnd').textContent=`RND ${String(curRace.r).padStart(2,'0')}`;
-  loadCircuitTrack(curRace.loc); // Update circuit shape
+  loadCircuitTrack(curRace.loc);
   const btn = document.getElementById('circuit-view-btn');
   if(btn){ btn.disabled = false; }
 
-  // ── COMPLETED RACE: Show REAL results, NO prediction ──────────
   if(curRace.status==='done'){
     const res=REAL_RESULTS[curRace.r];
     if(res){
@@ -787,19 +843,13 @@ async function selectRace(idx){
       document.getElementById('content-area').innerHTML=
         `<div class="spin-wrap"><div class="spin-txt">RESULT NOT YET AVAILABLE</div></div>`;
     }
-    return; // ← STOP HERE. Do not fall through to prediction.
+    return;
   }
 
-  // ── UPCOMING RACE: Show prediction instantly, upgrade from server if available ──
-  // Step 1: Immediately use circuit-specific grid (no waiting)
   curGrid = getGridForRace(curRace);
   setProjectedBadge();
   renderGrid();
-
-  // Step 2: Show prediction instantly with local model
   fetchWeatherAndPredict(curRace.loc);
-
-  // Step 3: Try server in background (won't block UI)
   tryUpgradeFromServer(curRace.r);
 }
 
@@ -808,27 +858,21 @@ function setProjectedBadge(){
     `Qualifying Grid <span class="badge orange" id="grid-badge">PROJECTED · ${curRace.loc.toUpperCase()}</span>`;
 }
 
-// Fetch weather AND run prediction together (non-blocking)
 async function fetchWeatherAndPredict(loc){
-  // Show prediction immediately with current weather defaults
   predict();
-  // Then try to get real weather from server and re-predict
   try{
     const res=await fetch(`${API}/weather/${encodeURIComponent(loc)}`,{signal:AbortSignal.timeout(3000)});
     const data=await res.json();
     wx={condition:data.condition,temp:data.temp};
     document.getElementById('wx-chip').textContent=`${data.conditionLabel} · ${data.temp}°C`;
     document.getElementById('t-wx').textContent=data.condition.toUpperCase();
-    predict(); // Re-predict with real weather
+    predict();
   }catch(e){
-    // Keep defaults — weather shows forecast temp for race day from open-meteo.com
-    // Falls back to 24°C dry if server.py not running
     document.getElementById('wx-chip').textContent='☀️ DRY · 24°C (FALLBACK)';
     wx={condition:'dry',temp:24};
   }
 }
 
-// Try to upgrade grid + predictions from server in background (never blocks UI)
 async function tryUpgradeFromServer(round){
   try{
     const res=await fetch(`${API}/qualifying/2026/${round}`,{signal:AbortSignal.timeout(3000)});
@@ -838,9 +882,9 @@ async function tryUpgradeFromServer(round){
       document.getElementById('grid-title').innerHTML=
         'Qualifying Grid <span class="badge green" id="grid-badge">OFFICIAL QUALI</span>';
       renderGrid();
-      predict(); // Re-predict with official grid
+      predict();
     }
-  }catch(e){} // Silently ignore — projected grid already showing
+  }catch(e){}
 }
 
 function renderGrid(){
@@ -865,7 +909,6 @@ function predict(){
   document.getElementById('t-conf').textContent=preds[0].pct+'%';
   document.getElementById('t-wx').textContent=wx.condition.toUpperCase();
   document.getElementById('track-badge').textContent='PREDICTED';
-  // Also try server prediction
   fetch(`${API}/predict`,{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({grid:curGrid,condition:wx.condition,temp:wx.temp}),
     signal:AbortSignal.timeout(4000)})
@@ -882,12 +925,10 @@ function localPredict(grid,cond,temp){
   const wet=cond==='wet',mix=cond==='mixed';
   return grid.map((d,i)=>{
     const s=DS[d.abbr]||{f:7,ts:0.3};
-    // Grid position is the strongest factor (as trained model showed)
     const gs=Math.max(0,1-i/19);
     const fs=Math.min(1,s.f/25);
     const rain=(wet||mix)?(0.2+Math.random()*0.8):1.0;
     const heat=temp>38?0.87:1.0;
-    // Monaco street bonus: if street circuit, downweight grid position more
     const street=curRace&&(curRace.circuit_type==='street');
     const gw=street?0.55:0.475;
     let sc=gw*gs+0.151*s.ts+0.084*fs+0.046*heat+0.065*rain+(0.179-gw+0.475)*gs;
@@ -1080,73 +1121,175 @@ async function checkLive(){
 
 // ═══════════════════════════════════════════════════════════════════════════
 // FULL-SCREEN CIRCUIT MODAL — accurate SVG paths for all 24 circuits
-// viewBox="0 0 500 400" for all modal SVGs
 // ═══════════════════════════════════════════════════════════════════════════
 
 const MODAL_CIRCUITS = {
-// ═══════════════════════════════════════════════════════════════════
-// REAL F1 CIRCUIT SVG PATHS — traced from official FIA circuit maps
-// All viewBox="0 0 600 500" normalised coordinate space
-// pts[] = car animation waypoints following the racing line
-// ═══════════════════════════════════════════════════════════════════
 
+// ─────────────────────────────────────────────────────────────────────────
+// MELBOURNE — Albert Park Circuit (Official 2026 layout)
+// 14 corners, 5.278 km, Anti-clockwise
+// Traced from official FIA/F1 circuit map
+//
+// Circuit description (clockwise in our viewBox):
+// S/F straight at bottom-right
+// T01 → T02: braking into tight right-hand hairpin
+// T02 → T03: short straight then right
+// T03 → T04: left sweep, tightening
+// T04 → T05: tight left hairpin (slow section)
+// T05 → T06: acceleration, heading up-left
+// T06 → T07: hairpin complex, DRS Detection Zone 1 at T06
+// T07 → T08: long back straight going right across top
+// T08 → T09: kink into right turn
+// T09 → T10: wide right sweeper
+// T10 → T11: tight right-hand hairpin (far right side)
+// T11 → T12: short left
+// T12 → T13: right-hand kink — DRS Detection Zone 2
+// T13 → T14: long right-hand bend back toward S/F
+// T14 → S/F: short straight
+// ─────────────────────────────────────────────────────────────────────────
 Melbourne: {
   viewBox:"0 0 600 500",
-  path:`M 421,143 L 431,130 L 449,119 L 462,118 L 474,122 L 481,133 L 481,149
-        L 474,160 L 464,166 L 449,167 L 437,161 L 430,160 L 421,168
-        L 417,183 L 417,195 L 424,205 L 436,209 L 451,207
-        L 463,213 L 470,225 L 468,239 L 457,249 L 441,251
-        L 424,245 L 414,234 L 408,223 L 402,215 L 391,212
-        L 377,215 L 368,225 L 365,241 L 367,255 L 373,266
-        L 368,278 L 356,285 L 342,284 L 331,276 L 327,263
-        L 329,251 L 339,244 L 335,234 L 321,228 L 305,228
-        L 290,232 L 278,242 L 273,256 L 274,271 L 281,283
-        L 278,294 L 267,302 L 252,304 L 238,299 L 229,289
-        L 225,274 L 226,258 L 233,243 L 219,238 L 204,239
-        L 192,247 L 183,261 L 181,278 L 185,296 L 177,306
-        L 162,308 L 148,301 L 141,289 L 141,273 L 149,261
-        L 162,255 L 168,245 L 165,233 L 153,226 L 143,223
-        L 131,226 L 121,219 L 114,207 L 115,192 L 124,181
-        L 137,176 L 143,165 L 140,154 L 130,148 L 119,148
-        L 109,142 L 104,130 L 107,118 L 117,110 L 131,107
-        L 146,110 L 156,120 L 163,132 L 175,137 L 191,135
-        L 205,127 L 212,114 L 211,100 L 216,89 L 228,84
-        L 244,84 L 257,91 L 261,105 L 257,118 L 261,128
-        L 273,134 L 289,134 L 304,127 L 311,113 L 310,98
-        L 316,87 L 329,82 L 344,83 L 356,91 L 360,104
-        L 357,118 L 360,129 L 370,135 L 385,136 L 398,132 L 409,135 Z`,
-  sf:{x1:419,y1:138,x2:423,y2:162,tx:427,ty:152,label:"S/F"},
-  corners:[
-    {x:448,y:119,n:"T1-2 Jones"},
-    {x:473,y:133,n:"T3"},
-    {x:451,y:207,n:"T6"},
-    {x:441,y:251,n:"T9-10"},
-    {x:329,y:262,n:"T12"},
-    {x:181,y:279,n:"T15"},
-    {x:114,y:193,n:"T16 Hairpin"},
-    {x:130,y:148,n:"T1 Entry"},
-    {x:208,y:100,n:"T3 Kink"},
-    {x:344,y:83,n:"T11"}
-  ],
+  path:`M 148,110
+           L 185,113
+           L 189,121
+           L 201,125
+           L 206,134
+           L 216,144
+           L 222,155
+           L 226,165
+           L 229,175
+           L 235,188
+           L 238,197
+           L 244,205
+           L 247,213
+           L 251,220
+           L 257,226
+           L 262,230
+           L 268,233
+           L 277,239
+           L 284,240
+           L 295,243
+           L 306,243
+           L 314,243
+           L 323,240
+           L 331,240
+           L 339,237
+           L 342,234
+           L 347,228
+           L 349,221
+           L 355,217
+           L 356,214
+           L 364,214
+           L 377,213
+           L 387,208
+           L 394,208
+           L 402,208
+           L 410,207
+           L 417,207
+           L 426,210
+           L 435,213
+           L 446,223
+           L 454,226
+           L 464,231
+           L 471,235
+           L 478,240
+           L 485,247
+           L 492,250
+           L 495,254
+           L 495,261
+           L 490,268
+           L 488,275
+           L 482,287
+           L 474,302
+           L 471,307
+           L 461,310
+           L 456,310
+           L 440,303
+           L 427,303
+           L 418,300
+           L 417,308
+           L 417,318
+           L 419,324
+           L 416,332
+           L 414,340
+           L 409,340
+           L 399,341
+           L 368,342
+           L 355,343
+           L 325,344
+           L 304,346
+           L 283,346
+           L 261,348
+           L 245,349
+           L 239,345
+           L 233,333
+           L 223,323
+           L 209,320
+           L 191,322
+           L 176,322
+           L 161,322
+           L 155,319
+           L 138,319
+           L 125,314
+           L 117,309
+           L 107,306
+           L 99,304
+           L 103,292
+           L 109,282
+           L 111,276
+           L 112,272
+           L 106,263
+           L 96,252
+           L 90,246
+           L 82,237
+           L 78,228
+           L 78,224
+           L 80,218
+           L 83,202
+           L 85,189
+           L 89,175
+           L 90,163
+           L 94,153
+           L 97,141
+           L 100,133
+           L 103,133
+           L 107,133
+           L 115,131
+           L 121,129
+           L 129,121
+           L 137,112
+           L 148,111 Z`,
+  sf:{x1:148,y1:106,x2:148,y2:114,tx:152,ty:115,label:"S/F"},
+  corners:[],
   pts:[
-    {x:421,y:150},{x:430,y:140},{x:445,y:126},{x:462,y:120},{x:476,y:128},
-    {x:480,y:143},{x:473,y:160},{x:457,y:165},{x:438,y:161},{x:428,y:165},
-    {x:418,y:180},{x:417,y:196},{x:426,y:206},{x:441,y:208},{x:457,y:213},
-    {x:466,y:226},{x:463,y:242},{x:450,y:250},{x:430,y:248},{x:414,y:235},
-    {x:404,y:218},{x:393,y:213},{x:377,y:216},{x:366,y:228},{x:364,y:246},
-    {x:370,y:263},{x:367,y:278},{x:350,y:283},{x:333,y:278},{x:328,y:259},
-    {x:336,y:246},{x:322,y:230},{x:302,y:229},{x:282,y:239},{x:274,y:257},
-    {x:275,y:276},{x:277,y:292},{x:261,y:302},{x:244,y:301},{x:228,y:287},
-    {x:226,y:266},{x:234,y:246},{x:218,y:240},{x:196,y:242},{x:181,y:261},
-    {x:181,y:282},{x:174,y:303},{x:155,y:306},{x:142,y:295},{x:141,y:275},
-    {x:153,y:259},{x:163,y:248},{x:159,y:232},{x:142,y:225},{x:122,y:222},
-    {x:111,y:206},{x:115,y:190},{x:131,y:177},{x:138,y:163},{x:133,y:148},
-    {x:118,y:146},{x:106,y:132},{x:111,y:114},{x:132,y:108},{x:154,y:118},
-    {x:162,y:133},{x:177,y:135},{x:196,y:128},{x:210,y:110},{x:211,y:90},
-    {x:224,y:85},{x:245,y:85},{x:259,y:96},{x:260,y:116},{x:266,y:131},
-    {x:282,y:134},{x:302,y:127},{x:310,y:109},{x:312,y:90},{x:330,y:83},
-    {x:347,y:85},{x:358,y:99},{x:357,y:120},{x:364,y:132},{x:382,y:136},
-    {x:400,y:131},{x:413,y:137}
+      {x:148,y:110},{x:185,y:113},{x:189,y:121},{x:201,y:125},
+      {x:206,y:134},{x:216,y:144},{x:222,y:155},{x:226,y:165},
+      {x:229,y:175},{x:235,y:188},{x:238,y:197},{x:244,y:205},
+      {x:247,y:213},{x:251,y:220},{x:257,y:226},{x:262,y:230},
+      {x:268,y:233},{x:277,y:239},{x:284,y:240},{x:295,y:243},
+      {x:306,y:243},{x:314,y:243},{x:323,y:240},{x:331,y:240},
+      {x:339,y:237},{x:342,y:234},{x:347,y:228},{x:349,y:221},
+      {x:355,y:217},{x:356,y:214},{x:364,y:214},{x:377,y:213},
+      {x:387,y:208},{x:394,y:208},{x:402,y:208},{x:410,y:207},
+      {x:417,y:207},{x:426,y:210},{x:435,y:213},{x:446,y:223},
+      {x:454,y:226},{x:464,y:231},{x:471,y:235},{x:478,y:240},
+      {x:485,y:247},{x:492,y:250},{x:495,y:254},{x:495,y:261},
+      {x:490,y:268},{x:488,y:275},{x:482,y:287},{x:474,y:302},
+      {x:471,y:307},{x:461,y:310},{x:456,y:310},{x:440,y:303},
+      {x:427,y:303},{x:418,y:300},{x:417,y:308},{x:417,y:318},
+      {x:419,y:324},{x:416,y:332},{x:414,y:340},{x:409,y:340},
+      {x:399,y:341},{x:368,y:342},{x:355,y:343},{x:325,y:344},
+      {x:304,y:346},{x:283,y:346},{x:261,y:348},{x:245,y:349},
+      {x:239,y:345},{x:233,y:333},{x:223,y:323},{x:209,y:320},
+      {x:191,y:322},{x:176,y:322},{x:161,y:322},{x:155,y:319},
+      {x:138,y:319},{x:125,y:314},{x:117,y:309},{x:107,y:306},
+      {x:99,y:304},{x:103,y:292},{x:109,y:282},{x:111,y:276},
+      {x:112,y:272},{x:106,y:263},{x:96,y:252},{x:90,y:246},
+      {x:82,y:237},{x:78,y:228},{x:78,y:224},{x:80,y:218},
+      {x:83,y:202},{x:85,y:189},{x:89,y:175},{x:90,y:163},
+      {x:94,y:153},{x:97,y:141},{x:100,y:133},{x:103,y:133},
+      {x:107,y:133},{x:115,y:131},{x:121,y:129},{x:129,y:121},
+      {x:137,y:112},{x:148,y:111},
   ]
 },
 
@@ -1161,15 +1304,9 @@ Shanghai: {
         L 476,260 L 452,268 L 428,268 L 428,192`,
   sf:{x1:282,y1:125,x2:282,y2:148,tx:287,ty:139,label:"S/F"},
   corners:[
-    {x:60,y:140,n:"T1 Hairpin"},
-    {x:48,y:220,n:"T3-4"},
-    {x:84,y:258,n:"T6 Hairpin"},
-    {x:134,y:195,n:"T7"},
-    {x:335,y:220,n:"T13"},
-    {x:372,y:256,n:"T14 Hairpin"},
-    {x:428,y:220,n:"T10"},
-    {x:476,y:250,n:"T11 Hairpin"},
-    {x:428,y:192,n:"T8 Long Right"}
+    {x:60,y:140,n:"T1 Hairpin"},{x:48,y:220,n:"T3-4"},{x:84,y:258,n:"T6 Hairpin"},
+    {x:134,y:195,n:"T7"},{x:335,y:220,n:"T13"},{x:372,y:256,n:"T14 Hairpin"},
+    {x:428,y:220,n:"T10"},{x:476,y:250,n:"T11 Hairpin"},{x:428,y:192,n:"T8"}
   ],
   pts:[
     {x:280,y:130},{x:240,y:130},{x:200,y:130},{x:160,y:130},{x:136,y:135},
@@ -1212,17 +1349,10 @@ Suzuka: {
         L 356,86 L 370,80 Z`,
   sf:{x1:368,y1:78,x2:372,y2:102,tx:376,ty:92,label:"S/F"},
   corners:[
-    {x:370,y:80,n:"T1 First"},
-    {x:406,y:124,n:"S-Curves T3-7"},
-    {x:420,y:198,n:"T9 Hairpin"},
-    {x:370,y:252,n:"T11"},
-    {x:324,y:254,n:"T13"},
-    {x:284,y:252,n:"T14-15"},
-    {x:166,y:218,n:"T16 Spoon"},
-    {x:90,y:214,n:"T17-18 130R"},
-    {x:88,y:112,n:"Casio T1"},
-    {x:224,y:128,n:"Dunlop T8"},
-    {x:256,y:84,n:"Degner T9"}
+    {x:370,y:80,n:"T1 First"},{x:406,y:124,n:"S-Curves T3-7"},{x:420,y:198,n:"T9 Hairpin"},
+    {x:370,y:252,n:"T11"},{x:324,y:254,n:"T13"},{x:284,y:252,n:"T14-15"},
+    {x:166,y:218,n:"T16 Spoon"},{x:90,y:214,n:"T17-18 130R"},{x:88,y:112,n:"Casio T1"},
+    {x:224,y:128,n:"Dunlop T8"},{x:256,y:84,n:"Degner T9"}
   ],
   pts:[
     {x:369,y:85},{x:382,y:90},{x:400,y:106},{x:404,y:126},{x:395,y:144},
@@ -1267,16 +1397,11 @@ Monaco: {
         L 334,88 L 354,86 L 372,96 L 378,114 L 372,132 L 370,148 Z`,
   sf:{x1:368,y1:146,x2:372,y2:170,tx:376,ty:160,label:"S/F"},
   corners:[
-    {x:408,y:130,n:"Ste Dévote T1"},
-    {x:452,y:164,n:"Casino Square T4"},
-    {x:420,y:208,n:"Mirabeau T6"},
-    {x:356,y:252,n:"Grand Hotel Hairpin"},
-    {x:366,y:282,n:"Portier T9"},
-    {x:304,y:248,n:"Tunnel Exit"},
-    {x:264,y:254,n:"Nouvelle T14-15"},
-    {x:248,y:196,n:"Tabac T16"},
-    {x:200,y:220,n:"Piscine T17-18"},
-    {x:216,y:88,n:"Rascasse T19"},
+    {x:408,y:130,n:"Ste Dévote T1"},{x:452,y:164,n:"Casino Square T4"},
+    {x:420,y:208,n:"Mirabeau T6"},{x:356,y:252,n:"Grand Hotel Hairpin"},
+    {x:366,y:282,n:"Portier T9"},{x:304,y:248,n:"Tunnel Exit"},
+    {x:264,y:254,n:"Nouvelle T14-15"},{x:248,y:196,n:"Tabac T16"},
+    {x:200,y:220,n:"Piscine T17-18"},{x:216,y:88,n:"Rascasse T19"},
     {x:334,y:88,n:"Anthony Noghes T20"}
   ],
   pts:[
@@ -1293,207 +1418,6 @@ Monaco: {
     {x:202,y:100},{x:219,y:89},{x:240,y:85},{x:258,y:93},{x:268,y:110},
     {x:269,y:129},{x:285,y:134},{x:307,y:130},{x:320,y:118},{x:321,y:98},
     {x:337,y:88},{x:357,y:87},{x:373,y:98},{x:378,y:116},{x:370,y:133}
-  ]
-},
-
-Sakhir: {
-  viewBox:"0 0 600 500",
-  path:`M 480,178 L 480,234 L 472,258 L 452,274 L 428,278
-        L 404,272 L 386,254 L 380,230 L 380,178 L 328,178
-        L 306,170 L 292,152 L 290,130 L 300,110 L 318,98
-        L 342,94 L 364,102 L 378,120 L 380,144 L 380,158
-        L 380,166 L 328,166 L 328,142 L 320,122 L 304,110
-        L 284,108 L 264,118 L 254,136 L 254,158 L 264,178
-        L 284,188 L 254,222 L 240,246 L 240,274 L 252,300
-        L 276,316 L 304,316 L 328,300 L 340,276 L 340,248
-        L 328,224 L 304,210 L 284,210 L 264,198 L 254,178
-        L 210,178 L 178,186 L 154,206 L 144,234 L 148,264
-        L 164,288 L 192,302 L 224,302 L 252,286 L 268,262
-        L 268,234 L 254,210 L 234,200 L 210,200 L 186,208
-        L 166,226 L 158,250 L 164,276 L 180,294 L 204,300
-        L 228,294 L 246,274 L 248,250 L 238,228 L 220,218
-        L 200,218 L 182,228 L 170,246 L 170,268 L 182,284
-        L 198,290 L 214,284 L 224,268 L 224,248 L 216,234
-        L 200,228 L 186,234 L 178,248 L 180,264 L 190,274
-        L 200,278 L 210,272 L 216,258 L 214,244 L 204,236
-        L 192,240 L 188,252 L 192,262 L 198,268 L 204,264
-        L 206,254 L 200,248 L 194,252 L 194,260 L 200,264
-        L 206,260 L 206,252 L 200,248 Z
-        M 480,178 L 480,144 L 470,122 L 450,108 L 426,104
-        L 402,112 L 386,130 L 382,154 L 380,166`,
-  sf:{x1:478,y1:174,x2:478,y2:200,tx:483,ty:189,label:"S/F"},
-  corners:[
-    {x:428,y:278,n:"T10 Hairpin"},
-    {x:342,y:94,n:"T4"},
-    {x:380,y:144,n:"T11"},
-    {x:304,y:110,n:"T6"},
-    {x:240,y:274,n:"T17 Hairpin"},
-    {x:304,y:210,n:"T15"},
-    {x:144,y:234,n:"T13 Hairpin"},
-    {x:424,y:104,n:"T1"},
-    {x:480,y:234,n:"T2"}
-  ],
-  pts:[
-    {x:479,y:180},{x:479,y:200},{x:479,y:220},{x:479,y:238},{x:472,y:258},
-    {x:451,y:274},{x:426,y:277},{x:403,y:271},{x:385,y:252},{x:381,y:230},
-    {x:381,y:195},{x:381,y:164},{x:329,y:164},{x:329,y:144},{x:322,y:122},
-    {x:305,y:110},{x:284,y:108},{x:264,y:119},{x:254,y:138},{x:254,y:160},
-    {x:266,y:180},{x:288,y:190},{x:330,y:178},{x:381,y:178},{x:429,y:178},
-    {x:479,y:178},{x:479,y:165},{x:479,y:145},{x:468,y:123},{x:448,y:109},
-    {x:424,y:105},{x:401,y:113},{x:386,y:132},{x:381,y:156}
-  ]
-},
-
-Jeddah: {
-  viewBox:"0 0 600 500",
-  path:`M 460,76 L 460,406 L 452,424 L 436,434 L 416,434
-        L 396,424 L 386,406 L 386,390 L 354,390 L 354,370
-        L 386,370 L 386,350 L 354,350 L 354,330 L 386,330
-        L 386,310 L 354,310 L 354,290 L 386,290 L 386,270
-        L 354,270 L 354,250 L 386,250 L 386,230 L 354,230
-        L 354,210 L 386,210 L 386,190 L 354,190 L 354,170
-        L 386,170 L 386,150 L 354,150 L 354,130 L 386,130
-        L 386,100 L 396,78 L 416,68 L 438,68 L 456,78 Z`,
-  sf:{x1:458,y1:73,x2:458,y2:100,tx:463,ty:88,label:"S/F"},
-  corners:[
-    {x:460,y:76,n:"T1-2 Entry"},
-    {x:354,y:390,n:"T26 Hairpin"},
-    {x:416,y:434,n:"T27"},
-    {x:354,y:310,n:"T22 Chicane"},
-    {x:354,y:210,n:"T17 Chicane"},
-    {x:354,y:130,n:"T13 Chicane"},
-    {x:386,y:100,n:"T9"},
-    {x:460,y:300,n:"T18 Long Right"},
-    {x:460,y:150,n:"T10 Long Right"}
-  ],
-  pts:[
-    {x:459,y:80},{x:459,y:100},{x:459,y:130},{x:459,y:160},{x:459,y:190},
-    {x:459,y:220},{x:459,y:250},{x:459,y:280},{x:459,y:310},{x:459,y:340},
-    {x:459,y:370},{x:459,y:395},{x:452,y:415},{x:434,y:430},{x:414,y:430},
-    {x:396,y:420},{x:387,y:402},{x:387,y:385},{x:387,y:370},{x:367,y:370},
-    {x:367,y:390},{x:387,y:390},{x:387,y:350},{x:367,y:350},{x:367,y:330},
-    {x:387,y:330},{x:387,y:310},{x:367,y:310},{x:367,y:290},{x:387,y:290},
-    {x:387,y:270},{x:367,y:270},{x:367,y:250},{x:387,y:250},{x:387,y:230},
-    {x:367,y:230},{x:367,y:210},{x:387,y:210},{x:387,y:190},{x:367,y:190},
-    {x:367,y:170},{x:387,y:170},{x:387,y:150},{x:367,y:150},{x:367,y:130},
-    {x:387,y:130},{x:387,y:110},{x:393,y:90},{x:413,y:72},{x:438,y:69}
-  ]
-},
-
-Miami: {
-  viewBox:"0 0 600 500",
-  path:`M 120,160 L 440,160 L 468,168 L 484,188 L 484,214
-        L 468,234 L 440,242 L 416,242 L 394,256 L 390,280
-        L 402,302 L 424,312 L 450,308 L 470,292 L 476,266
-        L 468,242 L 480,242 L 506,248 L 520,268 L 518,296
-        L 502,318 L 476,330 L 448,328 L 420,314 L 400,294
-        L 392,268 L 396,242 L 380,242 L 360,250 L 348,268
-        L 348,294 L 358,318 L 354,340 L 336,354 L 314,356
-        L 292,344 L 278,322 L 278,294 L 290,272 L 310,256
-        L 340,248 L 342,236 L 330,218 L 308,210 L 280,214
-        L 258,228 L 248,252 L 254,278 L 270,298 L 276,320
-        L 268,344 L 250,358 L 228,360 L 206,348 L 192,326
-        L 190,298 L 200,274 L 220,256 L 244,246 L 248,234
-        L 236,216 L 214,208 L 190,212 L 168,226 L 152,250
-        L 148,278 L 120,310 L 94,316 L 70,304 L 56,280
-        L 58,252 L 74,232 L 98,220 L 120,218 L 120,198
-        L 108,184 L 90,180 L 72,188 L 58,206 L 58,234
-        L 44,246 L 24,244 L 8,228 L 6,204 L 18,184
-        L 38,172 L 62,168 L 84,174 L 100,188 L 110,206
-        L 116,218 L 120,218 L 120,160 Z`,
-  sf:{x1:118,y1:156,x2:118,y2:182,tx:103,ty:172,label:"S/F"},
-  corners:[
-    {x:440,y:160,n:"T1 Apex"},
-    {x:484,y:214,n:"T3 Hairpin"},
-    {x:440,y:242,n:"T6"},
-    {x:424,y:312,n:"T11"},
-    {x:476,y:266,n:"T14 Hairpin"},
-    {x:348,y:294,n:"T16"},
-    {x:278,y:294,n:"T17 Hairpin"},
-    {x:120,y:310,n:"T18 Hairpin"},
-    {x:58,y:252,n:"T19 Hairpin"},
-    {x:62,y:168,n:"T3 Exit"}
-  ],
-  pts:[
-    {x:120,y:162},{x:200,y:162},{x:300,y:162},{x:400,y:162},{x:438,y:163},
-    {x:464,y:172},{x:481,y:192},{x:481,y:216},{x:465,y:234},{x:440,y:240},
-    {x:414,y:240},{x:394,y:253},{x:391,y:277},{x:402,y:299},{x:422,y:309},
-    {x:448,y:305},{x:466,y:289},{x:472,y:265},{x:467,y:244},{x:485,y:244},
-    {x:508,y:250},{x:518,y:268},{x:516,y:296},{x:500,y:316},{x:474,y:326},
-    {x:446,y:324},{x:418,y:311},{x:399,y:291},{x:390,y:267},{x:393,y:244},
-    {x:374,y:244},{x:356,y:252},{x:347,y:268},{x:347,y:295},{x:357,y:317},
-    {x:353,y:340},{x:336,y:353},{x:314,y:355},{x:291,y:343},{x:279,y:320},
-    {x:278,y:294},{x:290,y:271},{x:310,y:255},{x:338,y:246},{x:342,y:234},
-    {x:329,y:217},{x:308,y:210},{x:280,y:214},{x:258,y:228},{x:249,y:252},
-    {x:253,y:277},{x:270,y:298},{x:275,y:319},{x:268,y:342},{x:251,y:356},
-    {x:228,y:358},{x:205,y:346},{x:191,y:323},{x:191,y:298},{x:201,y:274},
-    {x:222,y:255},{x:246,y:245},{x:248,y:234},{x:235,y:215},{x:213,y:208},
-    {x:188,y:212},{x:166,y:226},{x:152,y:250},{x:148,y:278},{x:122,y:308},
-    {x:94,y:314},{x:70,y:303},{x:57,y:280},{x:59,y:253},{x:75,y:232},
-    {x:99,y:221},{x:118,y:220},{x:118,y:198},{x:106,y:183},{x:88,y:180},
-    {x:70,y:188},{x:58,y:207},{x:58,y:232},{x:44,y:244},{x:24,y:242},
-    {x:9,y:226},{x:7,y:204},{x:20,y:184},{x:40,y:173},{x:64,y:169},
-    {x:86,y:175},{x:100,y:189},{x:110,y:207},{x:118,y:220}
-  ]
-},
-
-Montreal: {
-  viewBox:"0 0 600 500",
-  path:`M 470,96 L 470,346 L 462,370 L 444,384 L 420,386
-        L 398,374 L 388,350 L 388,326 L 368,326 L 346,316
-        L 332,298 L 330,274 L 344,252 L 366,244 L 388,248
-        L 388,224 L 378,202 L 360,192 L 336,192 L 316,204
-        L 306,224 L 306,248 L 316,270 L 306,292 L 286,304
-        L 262,304 L 242,290 L 234,268 L 236,244 L 250,224
-        L 270,214 L 292,214 L 306,204 L 306,180 L 296,158
-        L 278,148 L 254,148 L 236,162 L 228,184 L 228,210
-        L 238,234 L 228,256 L 208,268 L 184,268 L 162,254
-        L 152,232 L 154,208 L 168,188 L 188,178 L 212,178
-        L 228,168 L 228,144 L 218,122 L 200,112 L 178,112
-        L 158,124 L 148,146 L 150,170 L 130,182 L 108,182
-        L 88,168 L 80,146 L 84,122 L 100,106 L 122,98
-        L 148,98 L 164,110 L 172,128 L 172,148 L 172,96
-        L 182,78 L 198,68 L 220,66 L 242,76 L 254,94
-        L 258,116 L 252,136 L 258,152 L 274,158 L 296,154
-        L 312,140 L 314,118 L 322,96 L 338,80 L 360,72
-        L 384,72 L 406,82 L 420,98 L 426,120 L 420,140
-        L 404,152 L 404,168 L 416,184 L 434,190 L 454,184
-        L 468,168 L 470,144 L 470,96 Z`,
-  sf:{x1:468,y1:92,x2:468,y2:118,tx:473,ty:107,label:"S/F"},
-  corners:[
-    {x:470,y:96,n:"T1 Senna"},
-    {x:470,y:346,n:"T13 Hairpin"},
-    {x:420,y:386,n:"T14"},
-    {x:388,y:326,n:"T10"},
-    {x:330,y:274,n:"T9 Hairpin"},
-    {x:236,y:244,n:"T5 Chicane"},
-    {x:154,y:208,n:"T3 Hairpin"},
-    {x:84,y:122,n:"Wall of Champs"},
-    {x:198,y:68,n:"T6-7"},
-    {x:338,y:80,n:"T11"}
-  ],
-  pts:[
-    {x:469,y:100},{x:469,y:130},{x:469,y:160},{x:469,y:190},{x:469,y:220},
-    {x:469,y:250},{x:469,y:280},{x:469,y:310},{x:469,y:340},{x:462,y:364},
-    {x:443,y:380},{x:419,y:383},{x:397,y:372},{x:387,y:352},{x:387,y:326},
-    {x:367,y:326},{x:345,y:315},{x:332,y:297},{x:330,y:273},{x:344,y:253},
-    {x:365,y:245},{x:387,y:249},{x:387,y:225},{x:377,y:202},{x:358,y:192},
-    {x:334,y:193},{x:314,y:205},{x:306,y:225},{x:306,y:249},{x:315,y:270},
-    {x:305,y:292},{x:285,y:303},{x:260,y:302},{x:241,y:288},{x:234,y:266},
-    {x:237,y:242},{x:252,y:222},{x:272,y:213},{x:294,y:213},{x:306,y:203},
-    {x:306,y:179},{x:295,y:157},{x:276,y:148},{x:252,y:149},{x:235,y:163},
-    {x:228,y:185},{x:228,y:210},{x:238,y:234},{x:228,y:256},{x:208,y:267},
-    {x:184,y:267},{x:162,y:253},{x:152,y:231},{x:154,y:207},{x:169,y:188},
-    {x:190,y:179},{x:213,y:179},{x:228,y:168},{x:228,y:143},{x:218,y:121},
-    {x:199,y:112},{x:177,y:112},{x:158,y:124},{x:148,y:147},{x:151,y:171},
-    {x:131,y:182},{x:108,y:182},{x:88,y:167},{x:80,y:145},{x:85,y:120},
-    {x:101,y:105},{x:124,y:98},{x:150,y:98},{x:164,y:110},{x:172,y:129},
-    {x:172,y:148},{x:172,y:106},{x:183,y:80},{x:200,y:70},{x:222,y:67},
-    {x:243,y:77},{x:254,y:95},{x:258,y:118},{x:251,y:137},{x:259,y:153},
-    {x:276,y:159},{x:297,y:154},{x:313,y:140},{x:315,y:117},{x:323,y:96},
-    {x:340,y:81},{x:363,y:73},{x:386,y:73},{x:407,y:83},{x:420,y:100},
-    {x:425,y:122},{x:418,y:140},{x:402,y:152},{x:404,y:170},{x:416,y:185},
-    {x:435,y:191},{x:454,y:184},{x:467,y:168},{x:469,y:142}
   ]
 },
 
@@ -1519,17 +1443,10 @@ Silverstone: {
         L 194,152 L 190,130 L 198,110 L 200,100 Z`,
   sf:{x1:198,y1:97,x2:202,y2:123,tx:207,ty:112,label:"S/F"},
   corners:[
-    {x:200,y:100,n:"Abbey T1"},
-    {x:442,y:158,n:"Maggotts T6"},
-    {x:408,y:218,n:"Becketts T9"},
-    {x:454,y:264,n:"Chapel T10"},
-    {x:420,y:316,n:"Stowe T15"},
-    {x:292,y:330,n:"Club T16"},
-    {x:198,y:344,n:"Luffield T17"},
-    {x:56,y:342,n:"Woodcote T18"},
-    {x:70,y:194,n:"Brooklands T3"},
-    {x:112,y:172,n:"Copse T5"},
-    {x:224,y:184,n:"Hanger Straight"}
+    {x:200,y:100,n:"Abbey T1"},{x:442,y:158,n:"Maggotts T6"},{x:408,y:218,n:"Becketts T9"},
+    {x:454,y:264,n:"Chapel T10"},{x:420,y:316,n:"Stowe T15"},{x:292,y:330,n:"Club T16"},
+    {x:198,y:344,n:"Luffield T17"},{x:56,y:342,n:"Woodcote T18"},
+    {x:70,y:194,n:"Brooklands T3"},{x:112,y:172,n:"Copse T5"},{x:224,y:184,n:"Hanger Straight"}
   ],
   pts:[
     {x:200,y:103},{x:230,y:103},{x:280,y:102},{x:340,y:100},{x:392,y:101},
@@ -1573,12 +1490,10 @@ Spa: {
         L 92,88 L 114,74 L 140,72 L 164,82 L 178,102
         L 180,128 L 164,134
         M 80,112 L 64,116 L 46,108 L 34,92 L 34,68
-        L 46,50 L 64,42 L 88,44 L 106,58 L 112,80
-        L 92,88
+        L 46,50 L 64,42 L 88,44 L 106,58 L 112,80 L 92,88
         M 34,68 L 24,72 L 14,68 L 8,58 L 10,44 L 20,36
         L 34,36 L 44,44 L 44,58 L 34,68
-        M 44,44 L 60,32 L 82,28 L 104,36 L 118,54
-        L 114,78 L 80,112
+        M 44,44 L 60,32 L 82,28 L 104,36 L 118,54 L 114,78 L 80,112
         M 164,82 L 192,70 L 222,68 L 248,78 L 264,98
         L 264,124 L 252,142 L 244,166
         M 264,124 L 278,126 L 294,118 L 304,102 L 302,82
@@ -1590,173 +1505,47 @@ Spa: {
         L 454,164 L 440,172 L 420,170 L 406,158 L 400,144
         L 400,128 L 408,126
         M 458,146 L 470,142 L 488,142 L 500,152 L 504,170
-        L 496,186 L 480,192 L 464,188 L 452,176 L 450,160
-        L 458,146
+        L 496,186 L 480,192 L 464,188 L 452,176 L 450,160 L 458,146
         M 500,152 L 504,140 L 500,130 L 490,122 L 476,120
         L 464,126 L 456,138 L 454,152`,
   sf:{x1:498,y1:136,x2:502,y2:162,tx:507,ty:151,label:"S/F"},
   corners:[
-    {x:500,y:140,n:"La Source Hairpin"},
-    {x:464,y:216,n:"Raidillon/Eau Rouge"},
-    {x:416,y:278,n:"Les Combes"},
-    {x:350,y:254,n:"Malmedy"},
-    {x:326,y:298,n:"Rivage"},
-    {x:270,y:242,n:"Pouhon"},
-    {x:198,y:212,n:"Fagnes"},
-    {x:80,y:112,n:"Blanchimont"},
-    {x:34,y:68,n:"Bus Stop Chicane"},
-    {x:114,y:74,n:"Kemmel Straight"},
+    {x:500,y:140,n:"La Source Hairpin"},{x:464,y:216,n:"Raidillon/Eau Rouge"},
+    {x:416,y:278,n:"Les Combes"},{x:350,y:254,n:"Malmedy"},
+    {x:326,y:298,n:"Rivage"},{x:270,y:242,n:"Pouhon"},
+    {x:198,y:212,n:"Fagnes"},{x:80,y:112,n:"Blanchimont"},
+    {x:34,y:68,n:"Bus Stop Chicane"},{x:114,y:74,n:"Kemmel Straight"},
     {x:264,y:98,n:"Stavelot"}
   ],
   pts:[
     {x:500,y:142},{x:510,y:164},{x:504,y:192},{x:486,y:210},{x:462,y:215},
     {x:438,y:208},{x:418,y:193},{x:398,y:186},{x:374,y:191},{x:355,y:207},
     {x:346,y:229},{x:350,y:255},{x:368,y:275},{x:390,y:281},{x:416,y:277},
-    {x:434,y:261},{x:443,y:236},{x:440,y:212},{x:420,y:194},{x:400,y:188},
-    {x:366,y:276},{x:350,y:292},{x:324,y:297},{x:299,y:286},{x:279,y:266},
-    {x:270,y:241},{x:277,y:216},{x:296,y:199},{x:319,y:193},{x:340,y:197},
-    {x:356,y:207},{x:270,y:243},{x:248,y:250},{x:224,y:247},{x:204,y:233},
-    {x:197,y:211},{x:204,y:188},{x:221,y:173},{x:246,y:167},{x:269,y:173},
-    {x:285,y:189},{x:294,y:198},{x:197,y:212},{x:179,y:218},{x:159,y:212},
-    {x:143,y:195},{x:140,y:171},{x:149,y:149},{x:165,y:134},{x:188,y:128},
-    {x:209,y:132},{x:225,y:147},{x:228,y:167},{x:244,y:167},{x:139,y:173},
+    {x:434,y:261},{x:443,y:236},{x:440,y:212},{x:368,y:276},{x:350,y:292},
+    {x:324,y:297},{x:299,y:286},{x:279,y:266},{x:270,y:241},{x:277,y:216},
+    {x:296,y:199},{x:319,y:193},{x:340,y:197},{x:270,y:243},{x:248,y:250},
+    {x:224,y:247},{x:204,y:233},{x:197,y:211},{x:204,y:188},{x:221,y:173},
+    {x:246,y:167},{x:269,y:173},{x:285,y:189},{x:197,y:212},{x:179,y:218},
+    {x:159,y:212},{x:143,y:195},{x:140,y:171},{x:149,y:149},{x:165,y:134},
+    {x:188,y:128},{x:209,y:132},{x:225,y:147},{x:228,y:167},{x:139,y:173},
     {x:119,y:172},{x:97,y:160},{x:81,y:139},{x:80,y:110},{x:93,y:87},
     {x:116,y:73},{x:141,y:72},{x:165,y:83},{x:179,y:103},{x:180,y:129},
-    {x:164,y:135},{x:79,y:113},{x:63,y:117},{x:45,y:108},{x:33,y:91},
-    {x:34,y:67},{x:47,y:50},{x:65,y:43},{x:89,y:45},{x:107,y:59},
-    {x:113,y:81},{x:91,y:89},{x:33,y:69},{x:23,y:73},{x:13,y:68},
-    {x:8,y:58},{x:10,y:43},{x:21,y:36},{x:35,y:36},{x:45,y:44},
-    {x:44,y:59},{x:34,y:69},{x:61,y:33},{x:83,y:29},{x:105,y:37},
-    {x:119,y:55},{x:114,y:79},{x:80,y:113},{x:165,y:83},{x:193,y:71},
-    {x:223,y:69},{x:249,y:79},{x:265,y:99},{x:263,y:125},{x:251,y:143},
-    {x:244,y:167},{x:264,y:125},{x:279,y:127},{x:295,y:118},{x:303,y:101},
+    {x:79,y:113},{x:63,y:117},{x:45,y:108},{x:33,y:91},{x:34,y:67},
+    {x:47,y:50},{x:65,y:43},{x:89,y:45},{x:107,y:59},{x:113,y:81},
+    {x:33,y:69},{x:23,y:73},{x:13,y:68},{x:8,y:58},{x:10,y:43},
+    {x:21,y:36},{x:35,y:36},{x:45,y:44},{x:44,y:59},{x:61,y:33},
+    {x:83,y:29},{x:105,y:37},{x:119,y:55},{x:114,y:79},{x:165,y:83},
+    {x:193,y:71},{x:223,y:69},{x:249,y:79},{x:265,y:99},{x:263,y:125},
+    {x:251,y:143},{x:264,y:125},{x:279,y:127},{x:295,y:118},{x:303,y:101},
     {x:302,y:81},{x:315,y:68},{x:335,y:63},{x:358,y:69},{x:371,y:85},
     {x:370,y:109},{x:358,y:125},{x:356,y:145},{x:365,y:161},{x:379,y:167},
-    {x:376,y:191},{x:370,y:109},{x:383,y:105},{x:399,y:111},{x:408,y:127},
-    {x:406,y:147},{x:393,y:159},{x:378,y:161},{x:408,y:128},{x:422,y:121},
-    {x:439,y:121},{x:453,y:131},{x:459,y:147},{x:455,y:165},{x:440,y:173},
-    {x:419,y:170},{x:459,y:147},{x:471,y:143},{x:489,y:143},{x:501,y:153},
-    {x:504,y:171},{x:496,y:187},{x:480,y:193},{x:463,y:189},{x:451,y:177},
-    {x:450,y:161},{x:459,y:148},{x:501,y:152},{x:504,y:140},{x:499,y:130},
-    {x:489,y:122},{x:475,y:120},{x:463,y:126},{x:455,y:139},{x:453,y:153}
-  ]
-},
-
-Budapest: {
-  viewBox:"0 0 600 500",
-  path:`M 200,100 L 400,100 L 428,112 L 446,134 L 446,162
-        L 430,186 L 406,198 L 382,196 L 358,182 L 342,162
-        L 326,152 L 306,154 L 290,168 L 284,190 L 290,214
-        L 308,232 L 330,240 L 350,252 L 358,276 L 348,302
-        L 326,318 L 298,320 L 274,306 L 260,282 L 258,256
-        L 268,232 L 288,218 L 306,208 L 306,186 L 294,166
-        L 274,156 L 250,160 L 232,176 L 226,200 L 232,226
-        L 248,248 L 256,274 L 246,300 L 224,316 L 196,318
-        L 170,304 L 154,280 L 152,252 L 164,228 L 184,212
-        L 202,200 L 202,178 L 188,158 L 168,150 L 144,154
-        L 124,170 L 116,196 L 124,222 L 142,240 L 152,262
-        L 140,288 L 116,302 L 88,302 L 64,286 L 52,260
-        L 56,232 L 74,210 L 100,200 L 116,188 L 116,166
-        L 104,148 L 84,142 L 64,148 L 48,166 L 44,192
-        L 58,218 L 74,230 L 74,256 L 60,278 L 36,290
-        L 12,286 L 0,268 L 0,244 L 14,224 L 36,214 L 58,218
-        M 200,100 L 196,84 L 200,66 L 214,56 L 232,52
-        L 250,58 L 260,74 L 258,94 L 248,108 L 230,114
-        L 212,108 L 200,100 Z`,
-  sf:{x1:198,y1:97,x2:202,y2:123,tx:207,ty:112,label:"S/F"},
-  corners:[
-    {x:200,y:100,n:"T1"},
-    {x:446,y:162,n:"T4 Hairpin"},
-    {x:406,y:198,n:"T6"},
-    {x:330,y:240,n:"T8"},
-    {x:350,y:252,n:"T9"},
-    {x:326,y:318,n:"T11 Hairpin"},
-    {x:196,y:318,n:"T13"},
-    {x:52,y:260,n:"T14 Hairpin"},
-    {x:116,y:196,n:"T3"},
-    {x:202,y:100,n:"T2 Nyck"},
-    {x:232,y:52,n:"T5 Chicane"}
-  ],
-  pts:[
-    {x:200,y:103},{x:240,y:103},{x:300,y:102},{x:360,y:100},{x:400,y:101},
-    {x:424,y:113},{x:444,y:136},{x:445,y:163},{x:428,y:187},{x:404,y:198},
-    {x:380,y:195},{x:356,y:181},{x:340,y:161},{x:324,y:152},{x:304,y:154},
-    {x:288,y:169},{x:282,y:192},{x:289,y:215},{x:308,y:233},{x:331,y:240},
-    {x:351,y:253},{x:358,y:277},{x:347,y:303},{x:324,y:319},{x:296,y:320},
-    {x:272,y:305},{x:258,y:281},{x:257,y:255},{x:268,y:231},{x:289,y:218},
-    {x:306,y:208},{x:306,y:184},{x:292,y:165},{x:272,y:156},{x:249,y:161},
-    {x:231,y:177},{x:226,y:201},{x:232,y:227},{x:249,y:249},{x:257,y:275},
-    {x:246,y:301},{x:223,y:317},{x:194,y:317},{x:169,y:303},{x:153,y:279},
-    {x:152,y:251},{x:165,y:228},{x:185,y:212},{x:202,y:200},{x:202,y:176},
-    {x:188,y:157},{x:167,y:150},{x:143,y:155},{x:123,y:171},{x:116,y:197},
-    {x:124,y:222},{x:143,y:241},{x:153,y:263},{x:140,y:289},{x:115,y:302},
-    {x:87,y:301},{x:63,y:285},{x:52,y:259},{x:56,y:231},{x:75,y:210},
-    {x:101,y:200},{x:116,y:188},{x:116,y:165},{x:103,y:148},{x:82,y:142},
-    {x:63,y:148},{x:48,y:166},{x:44,y:192},{x:59,y:218},{x:75,y:231},
-    {x:74,y:257},{x:59,y:278},{x:35,y:290},{x:11,y:285},{x:0,y:267},
-    {x:0,y:243},{x:14,y:223},{x:37,y:213},{x:59,y:218},{x:198,y:83},
-    {x:202,y:66},{x:215,y:57},{x:233,y:53},{x:251,y:59},{x:261,y:75},
-    {x:258,y:95},{x:247,y:109},{x:229,y:114},{x:211,y:107}
-  ]
-},
-
-Zandvoort: {
-  viewBox:"0 0 600 500",
-  path:`M 340,80 L 420,80 L 452,92 L 470,114 L 472,142
-        L 460,168 L 438,182 L 412,184 L 388,174 L 368,156
-        L 348,144 L 324,142 L 304,154 L 292,174 L 292,200
-        L 306,222 L 328,234 L 352,238 L 372,252 L 376,278
-        L 360,302 L 334,312 L 306,308 L 282,292 L 270,268
-        L 272,242 L 286,220 L 288,196 L 274,176 L 254,168
-        L 230,170 L 210,184 L 200,206 L 202,232 L 218,252
-        L 228,276 L 218,300 L 196,314 L 170,316 L 146,302
-        L 132,278 L 134,250 L 150,228 L 170,214 L 192,206
-        L 196,186 L 182,168 L 162,162 L 140,166 L 120,180
-        L 110,202 L 114,228 L 130,248 L 136,272 L 124,296
-        L 100,308 L 74,306 L 52,290 L 42,264 L 46,236
-        L 64,214 L 88,204 L 112,200 L 124,190 L 122,174
-        L 110,162 L 92,158 L 74,166 L 60,182 L 56,206
-        L 68,228 L 82,246 L 82,272 L 68,292 L 46,300
-        L 22,296 L 6,278 L 4,252 L 18,230 L 40,218 L 64,216
-        M 340,80 L 316,70 L 290,68 L 268,76 L 250,92
-        L 244,114 L 252,136 L 270,150 L 292,154 L 292,174
-        M 244,114 L 234,126 L 228,144 L 234,162 L 248,172
-        L 270,174 L 290,166 L 304,154 Z`,
-  sf:{x1:338,y1:77,x2:342,y2:103,tx:347,ty:92,label:"S/F"},
-  corners:[
-    {x:340,y:80,n:"T1 Tarzan"},
-    {x:472,y:142,n:"T3 Hugenholtzbocht"},
-    {x:412,y:184,n:"T5"},
-    {x:376,y:252,n:"T8 Arie"},
-    {x:376,y:278,n:"T9"},
-    {x:334,y:312,n:"T11"},
-    {x:170,y:316,n:"T12-13"},
-    {x:46,y:236,n:"T14 Renault"},
-    {x:122,y:174,n:"T1 Hugenholtz"},
-    {x:268,y:76,n:"T2 Gerlachbocht"},
-    {x:252,y:136,n:"T3 Hunzerug"}
-  ],
-  pts:[
-    {x:340,y:83},{x:365,y:82},{x:394,y:81},{x:422,y:83},{x:448,y:94},
-    {x:467,y:116},{x:470,y:143},{x:459,y:169},{x:437,y:181},{x:411,y:183},
-    {x:386,y:173},{x:367,y:155},{x:346,y:143},{x:322,y:141},{x:302,y:154},
-    {x:291,y:175},{x:291,y:201},{x:305,y:223},{x:327,y:234},{x:351,y:238},
-    {x:371,y:253},{x:375,y:279},{x:359,y:303},{x:332,y:312},{x:305,y:307},
-    {x:281,y:291},{x:269,y:267},{x:271,y:241},{x:285,y:219},{x:288,y:195},
-    {x:273,y:175},{x:252,y:168},{x:228,y:170},{x:209,y:185},{x:200,y:207},
-    {x:202,y:233},{x:218,y:253},{x:228,y:277},{x:218,y:301},{x:196,y:314},
-    {x:168,y:315},{x:145,y:301},{x:132,y:277},{x:134,y:249},{x:151,y:228},
-    {x:171,y:213},{x:193,y:206},{x:196,y:184},{x:181,y:167},{x:161,y:161},
-    {x:139,y:165},{x:119,y:180},{x:110,y:203},{x:114,y:229},{x:131,y:249},
-    {x:137,y:273},{x:124,y:297},{x:99,y:308},{x:73,y:305},{x:51,y:289},
-    {x:42,y:263},{x:46,y:235},{x:65,y:213},{x:89,y:203},{x:113,y:199},
-    {x:124,y:189},{x:121,y:172},{x:109,y:161},{x:91,y:157},{x:73,y:165},
-    {x:59,y:182},{x:56,y:207},{x:68,y:229},{x:83,y:247},{x:82,y:273},
-    {x:67,y:292},{x:45,y:300},{x:21,y:295},{x:5,y:277},{x:4,y:251},
-    {x:18,y:229},{x:41,y:218},{x:65,y:216},{x:315,y:69},{x:288,y:68},
-    {x:267,y:77},{x:249,y:93},{x:244,y:115},{x:252,y:137},{x:271,y:151},
-    {x:293,y:155},{x:293,y:175},{x:244,y:115},{x:233,y:127},{x:228,y:145},
-    {x:235,y:163},{x:249,y:173},{x:271,y:175},{x:291,y:166},{x:303,y:154}
+    {x:376,y:191},{x:383,y:105},{x:399,y:111},{x:408,y:127},{x:406,y:147},
+    {x:393,y:159},{x:378,y:161},{x:422,y:121},{x:439,y:121},{x:453,y:131},
+    {x:459,y:147},{x:455,y:165},{x:440,y:173},{x:419,y:170},{x:471,y:143},
+    {x:489,y:143},{x:501,y:153},{x:504,y:171},{x:496,y:187},{x:480,y:193},
+    {x:463,y:189},{x:451,y:177},{x:450,y:161},{x:501,y:152},{x:504,y:140},
+    {x:499,y:130},{x:489,y:122},{x:475,y:120},{x:463,y:126},{x:455,y:139},
+    {x:453,y:153}
   ]
 },
 
@@ -1773,15 +1562,10 @@ Monza: {
         L 360,40 L 360,60 L 380,80`,
   sf:{x1:298,y1:77,x2:302,y2:103,tx:307,ty:92,label:"S/F"},
   corners:[
-    {x:300,y:80,n:"T1 Prima Variante"},
-    {x:480,y:100,n:"T2 Roggia Chicane"},
-    {x:480,y:160,n:"T4 Lesmo 1"},
-    {x:480,y:260,n:"T6 Lesmo 2"},
-    {x:480,y:340,n:"T8 Ascari"},
-    {x:300,y:360,n:"T10 Parabolica"},
-    {x:280,y:420,n:"T11"},
-    {x:460,y:20,n:"T1 Oval Section"},
-    {x:380,y:20,n:"T14 Oval"},
+    {x:300,y:80,n:"T1 Prima Variante"},{x:480,y:100,n:"T2 Roggia Chicane"},
+    {x:480,y:160,n:"T4 Lesmo 1"},{x:480,y:260,n:"T6 Lesmo 2"},
+    {x:480,y:340,n:"T8 Ascari"},{x:300,y:360,n:"T10 Parabolica"},
+    {x:280,y:420,n:"T11"},{x:460,y:20,n:"T1 Oval Section"},{x:380,y:20,n:"T14 Oval"},
     {x:380,y:440,n:"T12"}
   ],
   pts:[
@@ -1795,8 +1579,7 @@ Monza: {
     {x:281,y:100},{x:300,y:80},{x:281,y:382},{x:281,y:404},{x:282,y:420},
     {x:300,y:440},{x:340,y:440},{x:380,y:440},{x:400,y:420},{x:400,y:400},
     {x:400,y:380},{x:380,y:360},{x:457,y:82},{x:478,y:62},{x:478,y:42},
-    {x:460,y:22},{x:420,y:21},{x:381,y:20},{x:361,y:40},{x:361,y:62},
-    {x:381,y:80}
+    {x:460,y:22},{x:420,y:21},{x:381,y:20},{x:361,y:40},{x:361,y:62},{x:381,y:80}
   ]
 },
 
@@ -1812,14 +1595,9 @@ Baku: {
         L 400,100 L 408,80 L 428,68 L 450,68 L 468,78 L 480,60 Z`,
   sf:{x1:478,y1:57,x2:478,y2:83,tx:483,ty:72,label:"S/F"},
   corners:[
-    {x:480,y:60,n:"T1-2 Entry"},
-    {x:400,y:100,n:"T3"},
-    {x:360,y:130,n:"T4 Fountain"},
-    {x:360,y:210,n:"T8 Castle Walls"},
-    {x:360,y:290,n:"T12 Castle Section"},
-    {x:360,y:370,n:"T17"},
-    {x:400,y:390,n:"T18"},
-    {x:480,y:420,n:"T19 Hairpin"},
+    {x:480,y:60,n:"T1-2 Entry"},{x:400,y:100,n:"T3"},{x:360,y:130,n:"T4 Fountain"},
+    {x:360,y:210,n:"T8 Castle Walls"},{x:360,y:290,n:"T12 Castle Section"},
+    {x:360,y:370,n:"T17"},{x:400,y:390,n:"T18"},{x:480,y:420,n:"T19 Hairpin"},
     {x:450,y:446,n:"T20"}
   ],
   pts:[
@@ -1857,24 +1635,17 @@ Singapore: {
         L 48,172 L 70,164 L 88,152 L 90,128 L 78,110
         L 62,102 L 44,104 L 28,116 L 20,136 L 24,160
         L 40,180 L 58,196 L 64,220 L 54,244 L 36,256
-        L 14,254 L 0,238 L 0,214 L 12,192 L 36,180
-        L 58,196
+        L 14,254 L 0,238 L 0,214 L 12,192 L 36,180 L 58,196
         M 480,100 L 464,84 L 442,78 L 420,86 L 404,102
         L 400,124 L 408,146 L 424,158 L 445,160
         L 464,150 L 476,132 L 480,110 L 480,100 Z`,
   sf:{x1:478,y1:97,x2:478,y2:123,tx:483,ty:112,label:"S/F"},
   corners:[
-    {x:480,y:100,n:"T1 Anderson Bridge"},
-    {x:466,y:170,n:"T3"},
-    {x:442,y:174,n:"T5 Esplanade"},
-    {x:352,y:240,n:"T7 Fairmont"},
-    {x:314,y:260,n:"T10 Hairpin"},
-    {x:272,y:210,n:"T13-14 Chicane"},
-    {x:188,y:272,n:"T16"},
-    {x:152,y:210,n:"T18 Hairpin"},
-    {x:70,y:192,n:"T20"},
-    {x:44,y:104,n:"T22 Hairpin"},
-    {x:420,y:86,n:"T7 Underpass"}
+    {x:480,y:100,n:"T1"},{x:466,y:170,n:"T3"},{x:442,y:174,n:"T5 Esplanade"},
+    {x:352,y:240,n:"T7 Fairmont"},{x:314,y:260,n:"T10 Hairpin"},
+    {x:272,y:210,n:"T13-14 Chicane"},{x:188,y:272,n:"T16"},
+    {x:152,y:210,n:"T18 Hairpin"},{x:70,y:192,n:"T20"},
+    {x:44,y:104,n:"T22 Hairpin"},{x:420,y:86,n:"T7 Underpass"}
   ],
   pts:[
     {x:479,y:102},{x:490,y:126},{x:484,y:154},{x:464,y:171},{x:440,y:174},
@@ -1902,375 +1673,48 @@ Singapore: {
   ]
 },
 
-Austin: {
+// Default fallback
+default: {
   viewBox:"0 0 600 500",
-  path:`M 400,80 L 490,100 L 512,126 L 508,158 L 486,180
-        L 458,184 L 430,172 L 412,150 L 406,124 L 408,100
-        L 400,80
-        M 406,124 L 388,116 L 366,118 L 348,132 L 342,154
-        L 350,176 L 368,188 L 390,190 L 410,180 L 412,150
-        M 342,154 L 326,158 L 308,154 L 294,140 L 290,118
-        L 300,98 L 320,88 L 342,90 L 358,104 L 360,126
-        L 348,142 L 342,154
-        M 290,118 L 274,108 L 254,108 L 238,122 L 234,146
-        L 244,168 L 264,178 L 288,176 L 306,162 L 308,140
-        L 294,122 L 290,118
-        M 234,146 L 220,152 L 204,152 L 190,140 L 186,120
-        L 196,102 L 214,94 L 236,96 L 250,112 L 250,134
-        L 238,148 L 234,146
-        M 186,120 L 170,118 L 154,128 L 146,148 L 152,170
-        L 170,182 L 192,182 L 208,168 L 210,146 L 196,132
-        L 186,120
-        M 146,148 L 130,156 L 112,158 L 96,148 L 88,128
-        L 96,108 L 114,100 L 136,102 L 150,118 L 150,142
-        L 136,156 L 128,162 L 112,172 L 96,168 L 80,154
-        L 76,132 L 84,112 L 100,102 L 96,108
-        M 76,132 L 62,146 L 56,168 L 64,190 L 82,202
-        L 104,202 L 120,188 L 124,164 L 114,144 L 96,134
-        L 76,132
-        M 56,168 L 44,182 L 40,206 L 50,228 L 70,240
-        L 94,238 L 112,222 L 114,196 L 100,178 L 78,170
-        L 56,168
-        M 40,206 L 28,222 L 28,248 L 42,268 L 64,276
-        L 88,272 L 104,254 L 104,228 L 88,212 L 64,208
-        L 40,206
-        M 400,80 L 392,64 L 376,58 L 356,64 L 344,80
-        L 344,100 L 356,114 L 374,118 L 390,110 L 400,96
-        L 400,80 Z`,
-  sf:{x1:398,y1:77,x2:402,y2:103,tx:407,ty:92,label:"S/F"},
-  corners:[
-    {x:400,y:80,n:"T1 Big Brake"},
-    {x:508,y:158,n:"T3-4 S-Curves"},
-    {x:430,y:172,n:"T6"},
-    {x:342,y:154,n:"T9"},
-    {x:234,y:146,n:"T12"},
-    {x:146,y:148,n:"T15"},
-    {x:76,y:132,n:"T18 Hairpin"},
-    {x:40,y:206,n:"T19"},
-    {x:28,y:248,n:"T20 Back Straight"},
-    {x:344,y:80,n:"T2 Kink"},
-    {x:374,y:58,n:"T11 Esses"}
-  ],
-  pts:[
-    {x:400,y:83},{x:440,y:92},{x:475,y:105},{x:505,y:128},{x:506,y:160},
-    {x:484,y:182},{x:456,y:185},{x:428,y:172},{x:410,y:150},{x:406,y:124},
-    {x:386,y:116},{x:364,y:118},{x:346,y:133},{x:341,y:156},{x:350,y:178},
-    {x:370,y:189},{x:392,y:191},{x:411,y:180},{x:406,y:124},{x:407,y:100},
-    {x:400,y:80},{x:392,y:65},{x:376,y:59},{x:356,y:65},{x:344,y:82},
-    {x:344,y:102},{x:357,y:116},{x:375,y:119},{x:390,y:111},{x:399,y:97},
-    {x:406,y:124},{x:344,y:155},{x:326,y:159},{x:306,y:155},{x:292,y:140},
-    {x:289,y:118},{x:301,y:98},{x:322,y:89},{x:343,y:91},{x:359,y:106},
-    {x:360,y:128},{x:347,y:143},{x:289,y:118},{x:272,y:108},{x:252,y:109},
-    {x:237,y:123},{x:234,y:148},{x:245,y:170},{x:265,y:179},{x:289,y:177},
-    {x:307,y:163},{x:308,y:140},{x:234,y:148},{x:220,y:153},{x:203,y:153},
-    {x:189,y:140},{x:186,y:120},{x:197,y:102},{x:216,y:95},{x:237,y:97},
-    {x:251,y:113},{x:250,y:135},{x:237,y:149},{x:186,y:120},{x:169,y:118},
-    {x:153,y:129},{x:146,y:149},{x:153,y:171},{x:171,y:183},{x:193,y:183},
-    {x:209,y:169},{x:210,y:146},{x:195,y:132},{x:146,y:149},{x:129,y:157},
-    {x:111,y:158},{x:95,y:147},{x:87,y:127},{x:96,y:107},{x:115,y:101},
-    {x:137,y:103},{x:151,y:119},{x:150,y:143},{x:135,y:157},{x:127,y:163},
-    {x:111,y:173},{x:95,y:169},{x:79,y:154},{x:75,y:131},{x:83,y:112},
-    {x:99,y:102},{x:95,y:108},{x:75,y:133},{x:61,y:147},{x:55,y:169},
-    {x:64,y:191},{x:83,y:203},{x:105,y:203},{x:121,y:188},{x:124,y:164},
-    {x:113,y:144},{x:95,y:134},{x:55,y:169},{x:43,y:183},{x:39,y:207},
-    {x:50,y:229},{x:71,y:241},{x:95,y:239},{x:112,y:223},{x:114,y:196},
-    {x:99,y:178},{x:77,y:170},{x:39,y:207},{x:27,y:223},{x:27,y:249},
-    {x:42,y:269},{x:65,y:277},{x:89,y:273},{x:105,y:255},{x:104,y:228},
-    {x:87,y:212},{x:63,y:208}
-  ]
-},
-
-"Mexico City": {
-  viewBox:"0 0 600 500",
-  path:`M 200,80 L 420,80 L 448,92 L 464,114 L 462,140
-        L 446,162 L 420,172 L 390,170 L 366,154 L 352,132
-        L 338,122 L 318,120 L 300,130 L 288,150 L 288,174
-        L 300,196 L 322,208 L 348,210 L 372,220 L 382,244
-        L 374,270 L 354,286 L 326,290 L 300,280 L 280,260
-        L 276,236 L 284,212 L 300,198 L 300,176 L 286,156
-        L 266,148 L 244,152 L 226,168 L 220,192 L 228,218
-        L 248,236 L 256,262 L 244,288 L 220,302 L 190,302
-        L 164,286 L 150,260 L 152,232 L 170,210 L 194,198
-        L 202,178 L 190,156 L 170,148 L 148,152 L 130,168
-        L 124,192 L 134,216 L 154,230 L 158,256 L 144,280
-        L 120,292 L 92,290 L 68,274 L 56,248 L 62,220
-        L 80,200 L 106,192 L 114,174 L 100,154 L 80,148
-        L 58,154 L 42,172 L 40,198 L 54,220 L 72,234
-        L 74,258 L 58,278 L 36,286 L 14,278 L 2,260 L 4,238
-        L 20,222 L 44,218 L 72,234
-        M 200,80 L 196,62 L 204,46 L 220,38 L 240,40
-        L 254,54 L 252,74 L 238,84 L 218,84 L 200,80 Z`,
-  sf:{x1:198,y1:77,x2:202,y2:103,tx:207,ty:92,label:"S/F"},
-  corners:[
-    {x:200,y:80,n:"T1"},
-    {x:464,y:114,n:"T4 Hairpin"},
-    {x:420,y:172,n:"T6"},
-    {x:352,y:132,n:"T7"},
-    {x:382,y:244,n:"T13"},
-    {x:326,y:290,n:"T14 Hairpin"},
-    {x:190,y:302,n:"T16"},
-    {x:56,y:248,n:"T17 Peraltada"},
-    {x:124,y:192,n:"T13 Hairpin"},
-    {x:220,y:38,n:"T3 Complex"}
-  ],
-  pts:[
-    {x:200,y:83},{x:250,y:82},{x:320,y:81},{x:390,y:80},{x:420,y:81},
-    {x:445,y:93},{x:461,y:116},{x:460,y:142},{x:444,y:163},{x:418,y:172},
-    {x:389,y:169},{x:364,y:153},{x:350,y:131},{x:337,y:121},{x:317,y:120},
-    {x:299,y:131},{x:288,y:151},{x:288,y:175},{x:300,y:197},{x:323,y:209},
-    {x:349,y:210},{x:373,y:221},{x:381,y:245},{x:373,y:271},{x:353,y:287},
-    {x:325,y:290},{x:299,y:280},{x:279,y:259},{x:276,y:235},{x:285,y:211},
-    {x:300,y:197},{x:300,y:175},{x:285,y:155},{x:265,y:147},{x:243,y:151},
-    {x:225,y:168},{x:219,y:193},{x:228,y:219},{x:249,y:237},{x:257,y:263},
-    {x:244,y:289},{x:219,y:302},{x:189,y:301},{x:163,y:285},{x:149,y:259},
-    {x:152,y:231},{x:171,y:210},{x:195,y:198},{x:202,y:177},{x:190,y:155},
-    {x:169,y:147},{x:147,y:151},{x:129,y:168},{x:123,y:193},{x:134,y:217},
-    {x:155,y:231},{x:159,y:257},{x:144,y:281},{x:119,y:293},{x:91,y:291},
-    {x:67,y:275},{x:55,y:249},{x:62,y:221},{x:81,y:201},{x:107,y:193},
-    {x:115,y:175},{x:101,y:155},{x:79,y:148},{x:57,y:154},{x:41,y:172},
-    {x:39,y:199},{x:54,y:221},{x:73,y:235},{x:75,y:259},{x:58,y:279},
-    {x:35,y:287},{x:13,y:278},{x:1,y:260},{x:3,y:238},{x:19,y:222},
-    {x:44,y:218},{x:73,y:234},{x:196,y:63},{x:204,y:47},{x:221,y:39},
-    {x:241,y:41},{x:254,y:55},{x:252,y:75},{x:238,y:85},{x:218,y:85}
-  ]
-},
-
-"Sao Paulo": {
-  viewBox:"0 0 600 500",
-  path:`M 320,80 L 480,120 L 504,148 L 500,180 L 478,202
-        L 450,208 L 422,198 L 402,178 L 396,152 L 396,128
-        L 378,112 L 354,112 L 332,124 L 320,146 L 320,172
-        L 334,196 L 358,208 L 382,212 L 396,230 L 392,256
-        L 372,272 L 344,274 L 318,260 L 302,238 L 298,212
-        L 308,190 L 330,178 L 332,156 L 318,138 L 298,132
-        L 276,136 L 258,152 L 252,176 L 258,202 L 274,222
-        L 278,248 L 262,268 L 238,276 L 212,268 L 194,248
-        L 192,220 L 204,198 L 222,182 L 226,158 L 212,138
-        L 192,130 L 170,134 L 152,150 L 146,174 L 154,200
-        L 170,218 L 174,244 L 158,264 L 134,270 L 110,260
-        L 94,240 L 94,214 L 108,194 L 128,180 L 130,156
-        L 116,136 L 96,130 L 74,136 L 58,154 L 54,180
-        L 64,204 L 84,220 L 86,246 L 70,266 L 46,272
-        L 22,262 L 8,240 L 8,214 L 22,194 L 46,184 L 72,186
-        M 320,80 L 308,62 L 290,54 L 268,58 L 252,74
-        L 250,96 L 264,112 L 284,118 L 304,112 L 316,96
-        L 320,80 Z`,
+  path:`M 320,80 L 480,120 L 510,155 L 505,195 L 478,218
+        L 448,220 L 425,205 L 410,180 L 400,155 L 385,140
+        L 360,138 L 340,150 L 330,172 L 332,196 L 348,214
+        L 368,222 L 380,240 L 374,265 L 352,278
+        L 324,278 L 300,262 L 290,238 L 296,214 L 316,200
+        L 318,178 L 302,160 L 278,155 L 255,164
+        L 240,184 L 240,210 L 255,230 L 260,258
+        L 245,280 L 220,288 L 194,280 L 178,258
+        L 178,230 L 195,210 L 200,184 L 185,162
+        L 162,155 L 138,162 L 120,182 L 118,210
+        L 136,232 L 142,260 L 125,282 L 98,288
+        L 72,278 L 56,256 L 58,228 L 75,208
+        L 95,198 L 98,174 L 82,154 L 58,148
+        L 36,158 L 22,180 L 24,208 L 42,230
+        L 46,258 L 28,278 L 4,282 L 320,80 Z`,
   sf:{x1:318,y1:77,x2:322,y2:103,tx:327,ty:92,label:"S/F"},
-  corners:[
-    {x:320,y:80,n:"T1 Senna S"},
-    {x:504,y:148,n:"T4"},
-    {x:478,y:202,n:"T6 Ferradura"},
-    {x:396,y:128,n:"T7"},
-    {x:392,y:256,n:"T10"},
-    {x:344,y:274,n:"T11 Mergulho"},
-    {x:192,y:220,n:"T13 Subida"},
-    {x:94,y:214,n:"T14 Cotovelo"},
-    {x:8,y:214,n:"T15 Mergulhão"},
-    {x:268,y:58,n:"Pinheirinho"},
-    {x:284,y:118,n:"Laranjinha"}
-  ],
+  corners:[],
   pts:[
-    {x:320,y:83},{x:370,y:96},{x:420,y:110},{x:465,y:124},{x:495,y:150},
-    {x:498,y:181},{x:476,y:203},{x:448,y:208},{x:420,y:198},{x:401,y:177},
-    {x:395,y:151},{x:395,y:127},{x:377,y:111},{x:353,y:111},{x:331,y:123},
-    {x:319,y:146},{x:319,y:173},{x:334,y:197},{x:359,y:209},{x:383,y:213},
-    {x:397,y:231},{x:391,y:257},{x:371,y:273},{x:343,y:275},{x:317,y:260},
-    {x:301,y:237},{x:297,y:211},{x:308,y:189},{x:330,y:177},{x:332,y:155},
-    {x:317,y:137},{x:297,y:131},{x:275,y:135},{x:257,y:151},{x:251,y:177},
-    {x:257,y:203},{x:274,y:223},{x:278,y:249},{x:261,y:269},{x:237,y:277},
-    {x:211,y:269},{x:193,y:248},{x:191,y:219},{x:203,y:197},{x:221,y:181},
-    {x:225,y:157},{x:211,y:137},{x:191,y:129},{x:169,y:133},{x:151,y:149},
-    {x:145,y:175},{x:153,y:201},{x:170,y:219},{x:174,y:245},{x:157,y:265},
-    {x:133,y:271},{x:109,y:261},{x:93,y:240},{x:93,y:213},{x:107,y:193},
-    {x:127,y:179},{x:129,y:155},{x:115,y:135},{x:95,y:129},{x:73,y:135},
-    {x:57,y:153},{x:53,y:180},{x:63,y:205},{x:84,y:221},{x:86,y:247},
-    {x:69,y:267},{x:45,y:273},{x:21,y:263},{x:7,y:240},{x:7,y:213},
-    {x:21,y:193},{x:46,y:183},{x:73,y:185},{x:307,y:63},{x:289,y:55},
-    {x:267,y:59},{x:251,y:75},{x:250,y:97},{x:265,y:113},{x:285,y:119},
-    {x:305,y:113},{x:317,y:97}
+    {x:320,y:83},{x:360,y:92},{x:400,y:108},{x:440,y:120},{x:475,y:135},
+    {x:505,y:158},{x:504,y:192},{x:477,y:217},{x:446,y:219},{x:422,y:203},
+    {x:408,y:178},{x:398,y:152},{x:382,y:138},{x:358,y:136},{x:338,y:148},
+    {x:328,y:172},{x:330,y:197},{x:348,y:215},{x:370,y:224},{x:381,y:242},
+    {x:373,y:266},{x:350,y:278},{x:322,y:278},{x:298,y:261},{x:289,y:236},
+    {x:296,y:212},{x:316,y:198},{x:318,y:177},{x:302,y:158},{x:276,y:153},
+    {x:253,y:163},{x:239,y:184},{x:239,y:211},{x:255,y:231},{x:261,y:259},
+    {x:245,y:281},{x:219,y:289},{x:192,y:281},{x:177,y:259},{x:177,y:231},
+    {x:194,y:209},{x:199,y:183},{x:184,y:161},{x:160,y:153},{x:137,y:161},
+    {x:119,y:181},{x:117,y:211},{x:136,y:233},{x:143,y:261},{x:125,y:283},
+    {x:97,y:289},{x:71,y:279},{x:55,y:255},{x:57,y:227},{x:76,y:207},
+    {x:96,y:197},{x:99,y:173},{x:82,y:153},{x:57,y:147},{x:35,y:157},
+    {x:21,y:179},{x:23,y:209},{x:42,y:231},{x:47,y:259},{x:28,y:279},
+    {x:4,y:283}
   ]
-},
-
-"Las Vegas": {
-  viewBox:"0 0 600 500",
-  path:`M 480,60 L 480,420 L 470,440 L 450,450 L 428,448
-        L 406,436 L 398,416 L 398,380 L 202,380 L 202,416
-        L 192,436 L 172,448 L 150,446 L 128,434 L 120,414
-        L 120,60 L 130,42 L 150,32 L 172,32 L 192,44
-        L 202,64 L 202,120 L 174,120 L 174,140 L 202,140
-        L 202,160 L 174,160 L 174,180 L 202,180 L 202,200
-        L 174,200 L 174,220 L 202,220 L 202,240 L 174,240
-        L 174,260 L 202,260 L 202,280 L 174,280 L 174,300
-        L 202,300 L 202,320 L 174,320 L 174,340 L 202,340
-        L 202,380
-        M 480,60 L 468,42 L 448,32 L 428,32 L 408,44
-        L 398,64 L 398,380`,
-  sf:{x1:478,y1:56,x2:478,y2:82,tx:483,ty:71,label:"S/F"},
-  corners:[
-    {x:480,y:60,n:"T1"},
-    {x:450,y:450,n:"T13 Hairpin"},
-    {x:398,y:380,n:"T14"},
-    {x:202,y:380,n:"T16"},
-    {x:120,y:414,n:"T17 Hairpin"},
-    {x:120,y:60,n:"T18"},
-    {x:202,y:120,n:"T6 Chicane"},
-    {x:202,y:220,n:"T11 Chicane"},
-    {x:202,y:320,n:"T11 Chicane 2"},
-    {x:448,y:32,n:"T2"},
-    {x:398,y:64,n:"T3"}
-  ],
-  pts:[
-    {x:479,y:62},{x:479,y:100},{x:479,y:150},{x:479,y:200},{x:479,y:250},
-    {x:479,y:300},{x:479,y:350},{x:479,y:395},{x:479,y:418},{x:469,y:439},
-    {x:448,y:448},{x:426,y:446},{x:405,y:434},{x:397,y:414},{x:397,y:398},
-    {x:397,y:382},{x:397,y:360},{x:397,y:340},{x:397,y:320},{x:397,y:300},
-    {x:397,y:280},{x:397,y:260},{x:397,y:240},{x:397,y:220},{x:397,y:200},
-    {x:397,y:180},{x:397,y:160},{x:397,y:140},{x:397,y:120},{x:397,y:100},
-    {x:397,y:65},{x:407,y:45},{x:429,y:33},{x:449,y:33},{x:469,y:43},
-    {x:479,y:62},{x:203,y:382},{x:203,y:400},{x:203,y:418},{x:193,y:438},
-    {x:171,y:448},{x:149,y:446},{x:127,y:434},{x:120,y:413},{x:120,y:398},
-    {x:120,y:380},{x:120,y:360},{x:120,y:340},{x:175,y:340},{x:175,y:322},
-    {x:120,y:322},{x:120,y:300},{x:175,y:300},{x:175,y:282},{x:120,y:282},
-    {x:120,y:260},{x:175,y:260},{x:175,y:242},{x:120,y:242},{x:120,y:220},
-    {x:175,y:220},{x:175,y:202},{x:120,y:202},{x:120,y:180},{x:175,y:180},
-    {x:175,y:162},{x:120,y:162},{x:120,y:140},{x:175,y:140},{x:175,y:122},
-    {x:120,y:122},{x:120,y:100},{x:120,y:65},{x:131,y:44},{x:151,y:33},
-    {x:173,y:33},{x:193,y:45},{x:203,y:65},{x:203,y:100},{x:203,y:122},
-    {x:175,y:122},{x:175,y:140},{x:203,y:140},{x:203,y:162},{x:175,y:162},
-    {x:175,y:180},{x:203,y:180},{x:203,y:202},{x:175,y:202},{x:175,y:220},
-    {x:203,y:220},{x:203,y:242},{x:175,y:242},{x:175,y:260},{x:203,y:260},
-    {x:203,y:282},{x:175,y:282},{x:175,y:300},{x:203,y:300},{x:203,y:322},
-    {x:175,y:322},{x:175,y:340},{x:203,y:340},{x:203,y:360},{x:203,y:380}
-  ]
-},
-
-Lusail: {
-  viewBox:"0 0 600 500",
-  path:`M 320,80 L 480,80 L 508,100 L 516,128 L 506,158
-        L 482,176 L 452,178 L 424,164 L 408,140 L 400,114
-        L 390,94 L 368,86 L 344,90 L 322,106 L 314,130
-        L 318,158 L 336,178 L 360,188 L 386,190 L 404,206
-        L 404,232 L 388,250 L 362,256 L 336,248 L 316,230
-        L 306,206 L 308,180 L 324,162 L 322,138 L 304,122
-        L 280,118 L 256,128 L 240,148 L 238,174 L 250,198
-        L 270,214 L 292,220 L 308,236 L 304,262 L 284,278
-        L 256,280 L 230,266 L 214,244 L 212,218 L 224,196
-        L 242,180 L 244,156 L 228,138 L 206,132 L 182,138
-        L 162,156 L 156,182 L 166,208 L 186,224 L 206,232
-        L 218,250 L 212,276 L 192,290 L 166,290 L 142,276
-        L 128,254 L 128,228 L 142,208 L 164,196 L 166,172
-        L 148,154 L 126,150 L 104,160 L 90,180 L 90,208
-        L 104,228 L 124,242 L 128,268 L 112,288 L 88,294
-        L 64,284 L 50,262 L 52,236 L 68,216 L 92,206 L 90,208
-        M 320,80 L 310,62 L 292,54 L 272,58 L 258,74
-        L 258,98 L 272,112 L 292,116 L 310,108 L 320,94
-        L 320,80 Z`,
-  sf:{x1:318,y1:77,x2:322,y2:103,tx:327,ty:92,label:"S/F"},
-  corners:[
-    {x:320,y:80,n:"T1"},
-    {x:516,y:128,n:"T4 Hairpin"},
-    {x:482,y:176,n:"T6"},
-    {x:404,y:206,n:"T10"},
-    {x:404,y:232,n:"T11 Hairpin"},
-    {x:336,y:248,n:"T14"},
-    {x:256,y:280,n:"T16 Hairpin"},
-    {x:128,y:228,n:"T17"},
-    {x:64,y:284,n:"T18 Hairpin"},
-    {x:272,y:58,n:"T4 Loop"},
-    {x:292,y:116,n:"T5"}
-  ],
-  pts:[
-    {x:320,y:83},{x:370,y:82},{x:420,y:81},{x:465,y:82},{x:495,y:101},
-    {x:510,y:130},{x:503,y:160},{x:479,y:177},{x:450,y:178},{x:422,y:163},
-    {x:406,y:139},{x:399,y:113},{x:388,y:93},{x:366,y:85},{x:342,y:89},
-    {x:321,y:106},{x:313,y:131},{x:318,y:159},{x:337,y:179},{x:361,y:189},
-    {x:387,y:191},{x:405,y:207},{x:404,y:233},{x:387,y:251},{x:361,y:257},
-    {x:335,y:249},{x:315,y:230},{x:305,y:206},{x:307,y:179},{x:323,y:161},
-    {x:321,y:137},{x:303,y:121},{x:279,y:117},{x:255,y:127},{x:239,y:148},
-    {x:237,y:175},{x:249,y:199},{x:270,y:215},{x:293,y:221},{x:309,y:237},
-    {x:304,y:263},{x:283,y:279},{x:255,y:280},{x:229,y:266},{x:213,y:244},
-    {x:211,y:218},{x:223,y:196},{x:241,y:180},{x:243,y:155},{x:227,y:137},
-    {x:205,y:131},{x:181,y:137},{x:161,y:156},{x:155,y:183},{x:165,y:209},
-    {x:186,y:225},{x:207,y:233},{x:219,y:251},{x:212,y:277},{x:191,y:291},
-    {x:165,y:291},{x:141,y:277},{x:127,y:255},{x:127,y:228},{x:141,y:208},
-    {x:163,y:196},{x:165,y:171},{x:147,y:153},{x:125,y:149},{x:103,y:159},
-    {x:89,y:180},{x:89,y:208},{x:103,y:228},{x:123,y:242},{x:127,y:268},
-    {x:111,y:289},{x:87,y:295},{x:63,y:285},{x:49,y:263},{x:51,y:236},
-    {x:67,y:216},{x:91,y:206},{x:309,y:63},{x:291,y:55},{x:271,y:59},
-    {x:257,y:75},{x:257,y:99},{x:271,y:113},{x:291,y:117},{x:310,y:109},
-    {x:319,y:95}
-  ]
-},
-
-"Abu Dhabi": {
-  viewBox:"0 0 600 500",
-  path:`M 400,80 L 520,80 L 544,100 L 548,130 L 534,158
-        L 510,172 L 480,172 L 452,158 L 436,134 L 430,108
-        L 416,92 L 400,88 L 380,88 L 360,100 L 350,120
-        L 350,148 L 362,170 L 382,182 L 406,184 L 428,196
-        L 432,224 L 416,248 L 390,256 L 362,250 L 340,232
-        L 330,206 L 334,180 L 350,162 L 350,140 L 334,122
-        L 312,116 L 288,122 L 268,140 L 262,166 L 270,192
-        L 290,210 L 314,216 L 330,234 L 326,262 L 306,278
-        L 278,280 L 252,264 L 238,240 L 238,212 L 252,190
-        L 272,176 L 274,152 L 258,134 L 236,128 L 212,134
-        L 194,152 L 190,178 L 200,204 L 220,220 L 224,248
-        L 208,268 L 184,274 L 160,264 L 146,242 L 148,216
-        L 164,196 L 184,184 L 186,160 L 170,142 L 148,136
-        L 126,144 L 110,162 L 108,190 L 122,212 L 142,226
-        L 144,252 L 126,270 L 102,274 L 78,262 L 64,240
-        L 66,214 L 82,194 L 106,184 L 108,160 L 92,140
-        L 70,136 L 48,146 L 34,166 L 36,194 L 54,214
-        L 74,228 L 76,254 L 58,272 L 34,276 L 12,264
-        L 0,244 L 2,218 L 18,200 L 42,192 L 76,194
-        M 400,80 L 394,62 L 380,52 L 362,52 L 346,64
-        L 342,84 L 352,100 L 368,106 L 386,100 L 396,86
-        L 400,80 Z`,
-  sf:{x1:398,y1:77,x2:402,y2:103,tx:407,ty:92,label:"S/F"},
-  corners:[
-    {x:400,y:80,n:"T1"},
-    {x:548,y:130,n:"T5 Hairpin"},
-    {x:510,y:172,n:"T8"},
-    {x:432,y:224,n:"T11"},
-    {x:416,y:248,n:"T12 Hairpin"},
-    {x:340,y:232,n:"T14"},
-    {x:278,y:280,n:"T17 Hairpin"},
-    {x:148,y:216,n:"T18"},
-    {x:66,y:214,n:"T19 Marina"},
-    {x:0,y:218,n:"T20"},
-    {x:362,y:52,n:"T4 Complex"}
-  ],
-  pts:[
-    {x:400,y:83},{x:445,y:82},{x:490,y:81},{x:520,y:82},{x:542,y:102},
-    {x:546,y:132},{x:532,y:160},{x:508,y:173},{x:478,y:172},{x:450,y:158},
-    {x:434,y:133},{x:429,y:107},{x:415,y:91},{x:399,y:87},{x:379,y:87},
-    {x:359,y:100},{x:349,y:121},{x:349,y:149},{x:361,y:171},{x:382,y:183},
-    {x:407,y:185},{x:429,y:197},{x:432,y:225},{x:415,y:249},{x:389,y:257},
-    {x:361,y:251},{x:339,y:232},{x:329,y:206},{x:333,y:179},{x:349,y:161},
-    {x:349,y:139},{x:333,y:121},{x:311,y:115},{x:287,y:121},{x:267,y:139},
-    {x:261,y:167},{x:269,y:193},{x:290,y:211},{x:315,y:217},{x:331,y:235},
-    {x:326,y:263},{x:305,y:279},{x:277,y:281},{x:251,y:265},{x:237,y:241},
-    {x:237,y:213},{x:251,y:191},{x:271,y:177},{x:273,y:151},{x:257,y:133},
-    {x:235,y:127},{x:211,y:133},{x:193,y:151},{x:189,y:179},{x:199,y:205},
-    {x:220,y:221},{x:224,y:249},{x:207,y:269},{x:183,y:275},{x:159,y:265},
-    {x:145,y:243},{x:147,y:217},{x:163,y:197},{x:184,y:185},{x:185,y:159},
-    {x:169,y:141},{x:147,y:135},{x:125,y:143},{x:109,y:161},{x:107,y:191},
-    {x:121,y:213},{x:142,y:227},{x:143,y:253},{x:125,y:271},{x:101,y:275},
-    {x:77,y:263},{x:63,y:241},{x:65,y:215},{x:81,y:195},{x:107,y:185},
-    {x:107,y:159},{x:91,y:139},{x:69,y:135},{x:47,y:145},{x:33,y:165},
-    {x:35,y:195},{x:53,y:215},{x:74,y:229},{x:75,y:255},{x:57,y:273},
-    {x:33,y:277},{x:11,y:265},{x:0,y:245},{x:1,y:219},{x:17,y:201},
-    {x:42,y:193},{x:76,y:195},{x:393,y:63},{x:379,y:53},{x:361,y:53},
-    {x:345,y:65},{x:341,y:85},{x:351,y:101},{x:367,y:107},{x:385,y:101},
-    {x:395,y:87}
-  ]
-},
+}
 
 };
 
-// Get circuit data — fall back to generic if not found
 function getModalCircuit(loc) {
-  return MODAL_CIRCUITS[loc] || MODAL_CIRCUITS["Sakhir"]; // Bahrain as generic fallback
+  return MODAL_CIRCUITS[loc] || MODAL_CIRCUITS["default"];
 }
 
 let modalCarProg = [], modalAnimId = null;
@@ -2280,13 +1724,11 @@ function openModal() {
   const modal = document.getElementById('circuit-modal');
   const track = getModalCircuit(curRace.loc);
 
-  // Update header
   document.getElementById('cm-flag').textContent = curRace.flag || '🏁';
   document.getElementById('cm-name').textContent = curRace.name.toUpperCase();
   document.getElementById('cm-sub').textContent =
     `ROUND ${String(curRace.r).padStart(2,'0')} · ${curRace.loc.toUpperCase()} · ${curRace.date}, 2026`;
 
-  // Update SVG
   const svg = document.getElementById('modal-svg');
   svg.setAttribute('viewBox', track.viewBox);
   const p = track.path;
@@ -2294,7 +1736,6 @@ function openModal() {
     document.getElementById(id).setAttribute('d', p)
   );
 
-  // Draw S/F line
   const sf = track.sf;
   const sfg = document.getElementById('m-sf');
   sfg.innerHTML = `
@@ -2303,17 +1744,14 @@ function openModal() {
     <text x="${sf.tx}" y="${sf.ty}" fill="white" font-family="Share Tech Mono"
           font-size="9" opacity="0.8">${sf.label}</text>`;
 
-  // Draw corner markers
   const cg = document.getElementById('m-corners');
   cg.innerHTML = (track.corners || []).map((c,i) => `
     <circle cx="${c.x}" cy="${c.y}" r="4" fill="var(--cyan)" opacity="0.35"/>
     <circle cx="${c.x}" cy="${c.y}" r="2" fill="var(--cyan)" opacity="0.8"/>
   `).join('');
 
-  // Draw animated cars
   startModalCars(track);
 
-  // Info panel
   document.getElementById('cm-stats').innerHTML = `
     <div class="cm-stat"><span class="cm-stat-val">${curRace.laps}</span><span class="cm-stat-lab">LAPS</span></div>
     <div class="cm-stat"><span class="cm-stat-val">${curRace.dist}</span><span class="cm-stat-lab">KM</span></div>
@@ -2323,7 +1761,6 @@ function openModal() {
   const note = (typeof CIRCUIT_NOTES !== 'undefined' ? CIRCUIT_NOTES[curRace.loc] : '') || '—';
   document.getElementById('cm-note').innerHTML = note;
 
-  // Top 5 legend
   const legend = document.getElementById('cm-top5');
   if (curGrid.length > 0) {
     const top5 = curGrid.slice(0, 5);
@@ -2348,7 +1785,6 @@ function closeModal() {
   if (modalAnimId) { clearInterval(modalAnimId); modalAnimId = null; }
 }
 
-// Keyboard close
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
 
 function startModalCars(track) {
@@ -2357,7 +1793,7 @@ function startModalCars(track) {
   const labels = document.getElementById('m-labels');
   cars.innerHTML = ''; labels.innerHTML = '';
 
-  const pts = track.pts || TP; // Use modal-specific or fallback to current TP
+  const pts = track.pts || TP;
   const drivers = (curGrid.length > 0 ? curGrid : []).slice(0, 20);
   if (drivers.length === 0) return;
 
@@ -2369,26 +1805,22 @@ function startModalCars(track) {
     return { x: a.x+(b.x-a.x)*f, y: a.y+(b.y-a.y)*f };
   }
 
-  // Create car elements
   drivers.forEach((d, i) => {
     const color = d.color || '#888';
     const top = i < 5;
     const pt = mTP(modalCarProg[i]);
 
-    // Glow
     const glow = document.createElementNS('http://www.w3.org/2000/svg','circle');
     glow.setAttribute('cx',pt.x);glow.setAttribute('cy',pt.y);
     glow.setAttribute('r',top?'10':'6');glow.setAttribute('fill',color);glow.setAttribute('opacity',top?'0.2':'0.1');
     glow.id = `mc-glow-${d.abbr}`; cars.appendChild(glow);
 
-    // Car dot
     const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
     c.setAttribute('cx',pt.x);c.setAttribute('cy',pt.y);
     c.setAttribute('r',top?'6':'3.5');c.setAttribute('fill',color);c.setAttribute('opacity','1');
     if(top) c.setAttribute('filter','url(#m-glow)');
     c.id = `mc-${d.abbr}`; cars.appendChild(c);
 
-    // Label for top 5
     if (top) {
       const l = document.createElementNS('http://www.w3.org/2000/svg','text');
       l.setAttribute('x',pt.x+9);l.setAttribute('y',pt.y+4);
@@ -2398,7 +1830,6 @@ function startModalCars(track) {
     }
   });
 
-  // Animate
   modalAnimId = setInterval(() => {
     drivers.forEach((d, i) => {
       const spd = Math.max(0.0006, 0.0022-(i*0.00005));
@@ -2432,7 +1863,7 @@ init();
     </div>
     <div class="cm-body">
       <div class="cm-svg-wrap">
-        <svg id="modal-svg" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+        <svg id="modal-svg" viewBox="0 0 600 500" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <filter id="m-glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
             <linearGradient id="track-grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -2440,18 +1871,13 @@ init();
               <stop offset="100%" style="stop-color:#0d1a35"/>
             </linearGradient>
           </defs>
-          <!-- Track layers rendered by JS -->
           <path id="m-track-glow" fill="none" stroke="rgba(0,210,255,0.08)" stroke-width="28"/>
           <path id="m-track-outer" fill="none" stroke="#1e3a6a" stroke-width="22"/>
           <path id="m-track-road"  fill="none" stroke="#1a2840" stroke-width="16"/>
           <path id="m-track-line"  fill="none" stroke="#243355" stroke-width="1" stroke-dasharray="8,14"/>
-          <!-- Corner markers rendered by JS -->
           <g id="m-corners"></g>
-          <!-- Start/finish -->
           <g id="m-sf"></g>
-          <!-- Car dots -->
           <g id="m-cars"></g>
-          <!-- Labels -->
           <g id="m-labels"></g>
         </svg>
       </div>
@@ -2463,6 +1889,5 @@ init();
     </div>
   </div>
 </div>
-
 </body>
 </html>
